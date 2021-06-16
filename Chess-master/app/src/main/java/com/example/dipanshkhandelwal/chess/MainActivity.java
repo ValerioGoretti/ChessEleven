@@ -14,6 +14,10 @@ import com.example.dipanshkhandelwal.chess.Pieces.Pawn;
 import com.example.dipanshkhandelwal.chess.Pieces.Piece;
 import com.example.dipanshkhandelwal.chess.Pieces.Queen;
 import com.example.dipanshkhandelwal.chess.Pieces.Rook;
+import com.github.bhlangonijr.chesslib.Board;
+import com.github.bhlangonijr.chesslib.Square;
+import com.github.bhlangonijr.chesslib.move.Move;
+import com.github.bhlangonijr.chesslib.Board;
 
 import java.util.ArrayList;
 
@@ -71,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Piece wPawn6;
     Piece wPawn7;
     Piece wPawn8;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -404,6 +409,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+        System.out.println("Click!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
         switch (v.getId()) {
             case R.id.R00:
@@ -771,6 +777,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void saveBoard(){
+        System.out.println("saveboard");
         numberOfMoves++;
         LastMoves.add(numberOfMoves-1 ,Board2 );
 
@@ -876,7 +883,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     void setColorAtAllowedPosition(ArrayList<Coordinates> list){
-
         for(int i=0; i<list.size(); i++){
             if(Board[list.get(i).getX()][list.get(i).getY()].getPiece() == null){
                 DisplayBoardBackground[list.get(i).getX()][list.get(i).getY()].setBackgroundResource(R.color.colorPositionAvailable);
@@ -887,6 +893,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private boolean moveIsAllowed(ArrayList<Coordinates> piece, Coordinates coordinate) {
+        System.out.println("-------------moveIsAllowed---------------");
+        System.out.println("coordinate -> "+coordinate.getX()+" "+coordinate.getY());
+        for (Coordinates x : piece) {
+            System.out.println("-------");
+            System.out.println("pieceX -> "+ x.getX());
+            System.out.println("pieceY -> "+ x.getY());
+        }
+        System.out.println("\\\\\\\\\\\\\\\\moveIsAllowed\\\\\\\\\\\\\\\\");
         Boolean Allowed = false;
         for(int i =0;i<piece.size();i++){
             if(piece.get(i).getX() == coordinate.getX()  &&  piece.get(i).getY() == coordinate.getY()){
@@ -906,6 +920,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void isKingInDanger(){
+        System.out.println("Entra in isKingDanger");
         ArrayList<Coordinates> List = new ArrayList<>();
 
         for(int i=0;i<8;i++){
