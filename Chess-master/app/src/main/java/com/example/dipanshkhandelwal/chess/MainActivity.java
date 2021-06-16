@@ -142,41 +142,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
-        Board[0][7].setPiece(wRook1);
-        Board[1][7].setPiece(wKnight1);
-        Board[2][7].setPiece(wBishop1);
-        Board[3][7].setPiece(wQueen);
-        Board[4][7].setPiece(wKing);
-        Board[5][7].setPiece(wBishop2);
-        Board[6][7].setPiece(wKnight2);
-        Board[7][7].setPiece(wRook2);
+        Board[0][7].setPiece(bRook1);
+        Board[1][7].setPiece(bKnight1);
+        Board[2][7].setPiece(bBishop1);
+        Board[3][7].setPiece(bQueen);
+        Board[4][7].setPiece(bKing);
+        Board[5][7].setPiece(bBishop2);
+        Board[6][7].setPiece(bKnight2);
+        Board[7][7].setPiece(bRook2);
 
-        Board[0][6].setPiece(wPawn1);
-        Board[1][6].setPiece(wPawn2);
-        Board[2][6].setPiece(wPawn3);
-        Board[3][6].setPiece(wPawn4);
-        Board[4][6].setPiece(wPawn5);
-        Board[5][6].setPiece(wPawn6);
-        Board[6][6].setPiece(wPawn7);
-        Board[7][6].setPiece(wPawn8);
+        Board[0][6].setPiece(bPawn1);
+        Board[1][6].setPiece(bPawn2);
+        Board[2][6].setPiece(bPawn3);
+        Board[3][6].setPiece(bPawn4);
+        Board[4][6].setPiece(bPawn5);
+        Board[5][6].setPiece(bPawn6);
+        Board[6][6].setPiece(bPawn7);
+        Board[7][6].setPiece(bPawn8);
 
-        Board[0][0].setPiece(bRook1);
-        Board[1][0].setPiece(bKnight1);
-        Board[2][0].setPiece(bBishop1);
-        Board[3][0].setPiece(bQueen);
-        Board[4][0].setPiece(bKing);
-        Board[5][0].setPiece(bBishop2);
-        Board[6][0].setPiece(bKnight2);
-        Board[7][0].setPiece(bRook2);
+        Board[0][0].setPiece(wRook1);
+        Board[1][0].setPiece(wKnight1);
+        Board[2][0].setPiece(wBishop1);
+        Board[3][0].setPiece(wQueen);
+        Board[4][0].setPiece(wKing);
+        Board[5][0].setPiece(wBishop2);
+        Board[6][0].setPiece(wKnight2);
+        Board[7][0].setPiece(wRook2);
 
-        Board[0][1].setPiece(bPawn1);
-        Board[1][1].setPiece(bPawn2);
-        Board[2][1].setPiece(bPawn3);
-        Board[3][1].setPiece(bPawn4);
-        Board[4][1].setPiece(bPawn5);
-        Board[5][1].setPiece(bPawn6);
-        Board[6][1].setPiece(bPawn7);
-        Board[7][1].setPiece(bPawn8);
+        Board[0][1].setPiece(wPawn1);
+        Board[1][1].setPiece(wPawn2);
+        Board[2][1].setPiece(wPawn3);
+        Board[3][1].setPiece(wPawn4);
+        Board[4][1].setPiece(wPawn5);
+        Board[5][1].setPiece(wPawn6);
+        Board[6][1].setPiece(wPawn7);
+        Board[7][1].setPiece(wPawn8);
 
         DisplayBoard[0][0] = (TextView) findViewById(R.id.R00);
         DisplayBoardBackground[0][0] = (TextView) findViewById(R.id.R000);
@@ -409,8 +409,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        System.out.println("Click!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
         switch (v.getId()) {
             case R.id.R00:
                 clickedPosition = new Coordinates(0, 0);
@@ -676,6 +674,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
 
+        System.out.println("X -> "+ clickedPosition.getX()+ " Y -> "+ clickedPosition.getY());
         if (!AnythingSelected) {
             if(Board[clickedPosition.getX()][clickedPosition.getY()].getPiece() == null) {
                 isKingInDanger();
@@ -777,7 +776,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void saveBoard(){
-        System.out.println("saveboard");
+        //System.out.println("saveboard");
         numberOfMoves++;
         LastMoves.add(numberOfMoves-1 ,Board2 );
 
