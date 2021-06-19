@@ -26,71 +26,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public Boolean FirstPlayerTurn;
-    //public ArrayList<Coordinates> listOfCoordinates = new ArrayList<>();
-    public Position[][] Board = new Position[8][8];
-    public Position[][] Board2 = new Position[8][8];
-    //public Boolean AnythingSelected = false;
-    //public Coordinates lastPos = null ;
     public Square c1=null;
     public Square c2=null;
     public Square click = null;
-    //public Coordinates clickedPosition = new Coordinates(0, 0);
     public TextView game_over;
     public TextView[][] DisplayBoard = new TextView[8][8];
     public TextView[][] DisplayBoardBackground = new TextView[8][8];
-    //public ArrayList<Position[][]> LastMoves = new ArrayList<>();
     public LinearLayout pawn_choices;
-    public int numberOfMoves;
-
-    Piece bKing;
-    Piece wKing;
-
-    Piece bQueen;
-    Piece wQueen;
-
-    Piece bKnight1;
-    Piece bKnight2;
-    Piece wKnight1;
-    Piece wKnight2;
-
-    Piece bRook1;
-    Piece bRook2;
-    Piece wRook1;
-    Piece wRook2;
-
-    Piece bBishop1;
-    Piece bBishop2;
-    Piece wBishop1;
-    Piece wBishop2;
-
-    Piece bPawn1;
-    Piece bPawn2;
-    Piece bPawn3;
-    Piece bPawn4;
-    Piece bPawn5;
-    Piece bPawn6;
-    Piece bPawn7;
-    Piece bPawn8;
-
-    Piece wPawn1;
-    Piece wPawn2;
-    Piece wPawn3;
-    Piece wPawn4;
-    Piece wPawn5;
-    Piece wPawn6;
-    Piece wPawn7;
-    Piece wPawn8;
-
-    Board board;
+    public Board board;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Making notification bar transparent
         if (Build.VERSION.SDK_INT >= 21) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
@@ -280,88 +231,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DisplayBoardBackground[6][7] = (TextView) findViewById(R.id.R067);
         DisplayBoardBackground[7][7] = (TextView) findViewById(R.id.R077);
 
-        /*
-        bKing = new King(false);
-        wKing = new King(true);
-
-        bQueen = new Queen(false);
-        wQueen = new Queen(true);
-
-        bRook1 = new Rook(false);
-        bRook2 = new Rook(false);
-        wRook1 = new Rook(true);
-        wRook2 = new Rook(true);
-
-        bKnight1 = new Knight(false);
-        bKnight2 = new Knight(false);
-        wKnight1 = new Knight(true);
-        wKnight2 = new Knight(true);
-
-        bBishop1 = new Bishop(false);
-        bBishop2 = new Bishop(false);
-        wBishop1 = new Bishop(true);
-        wBishop2 = new Bishop(true);
-
-        bPawn1 = new Pawn(false);
-        bPawn2 = new Pawn(false);
-        bPawn3 = new Pawn(false);
-        bPawn4 = new Pawn(false);
-        bPawn5 = new Pawn(false);
-        bPawn6 = new Pawn(false);
-        bPawn7 = new Pawn(false);
-        bPawn8 = new Pawn(false);
-
-        wPawn1 = new Pawn(true);
-        wPawn2 = new Pawn(true);
-        wPawn3 = new Pawn(true);
-        wPawn4 = new Pawn(true);
-        wPawn5 = new Pawn(true);
-        wPawn6 = new Pawn(true);
-        wPawn7 = new Pawn(true);
-        wPawn8 = new Pawn(true);
-
-
-
-        Board[0][7].setPiece(bRook1);
-        Board[1][7].setPiece(bKnight1);
-        Board[2][7].setPiece(bBishop1);
-        Board[3][7].setPiece(bQueen);
-        Board[4][7].setPiece(bKing);
-        Board[5][7].setPiece(bBishop2);
-        Board[6][7].setPiece(bKnight2);
-        Board[7][7].setPiece(bRook2);
-
-        Board[0][6].setPiece(bPawn1);
-        Board[1][6].setPiece(bPawn2);
-        Board[2][6].setPiece(bPawn3);
-        Board[3][6].setPiece(bPawn4);
-        Board[4][6].setPiece(bPawn5);
-        Board[5][6].setPiece(bPawn6);
-        Board[6][6].setPiece(bPawn7);
-        Board[7][6].setPiece(bPawn8);
-
-        Board[0][0].setPiece(wRook1);
-        Board[1][0].setPiece(wKnight1);
-        Board[2][0].setPiece(wBishop1);
-        Board[3][0].setPiece(wQueen);
-        Board[4][0].setPiece(wKing);
-        Board[5][0].setPiece(wBishop2);
-        Board[6][0].setPiece(wKnight2);
-        Board[7][0].setPiece(wRook2);
-
-        Board[0][1].setPiece(wPawn1);
-        Board[1][1].setPiece(wPawn2);
-        Board[2][1].setPiece(wPawn3);
-        Board[3][1].setPiece(wPawn4);
-        Board[4][1].setPiece(wPawn5);
-        Board[5][1].setPiece(wPawn6);
-        Board[6][1].setPiece(wPawn7);
-        Board[7][1].setPiece(wPawn8);
-
-
-
-        ho cancellato l'inizializzazione di displayboard un array di TextView
-         */
 
     }
 
@@ -570,39 +439,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
 
-
         ArrayList<Move> allowMoves = new ArrayList<>();
         if (c1==null) {
             c1=click;
             colorMove(c1);
-            /**
-             * SETTA IL PRIMO TOCCO
-             *
-             * COLORA LE CELLE
-             */
+
         } else {
             if (c1!=null && c2==null) {
                 c2=click;
                 Move mo=new Move(c1,c2);
-                System.out.println("SECONDO TOCCO");
                 if(isaMove(mo)){
                     board.doMove(mo);
-                    System.out.println(board.toString());
+                    clearBoardColor();
+                    parseMatrixBoard();
                     clearDuble();
-                    //clearBoardColor();
                 }else {
-                    System.out.println("NON è una mossa valida");
-                    clearDuble();
-                    //clearBoardColor();
+                    clearBoardColor();
+                    c1=c2;
+                    c2=null;
+                    c1=click;
+                    colorMove(c1);
                 }
-                /**
-                 *Colori
-                 */
-            }else {
-                System.out.println("ALTROOOOOOOOOOOOOOOOO");
             }
         }
-
+        if (board.isMated()){
+            System.out.println("scacco matto");
+        }
+        if (board.isDraw()){
+            System.out.println("patta");
+        }
+        if (board.isStaleMate()){
+            System.out.println("stallo");
+        }
     }
 
 
@@ -616,9 +484,127 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     
 
-    /*
-        DA FIXARE FA TUTTA LA TABELLA BLU
-    clear all color of a board
+    private void parseMatrixBoard(){
+        String str=board.toString();
+
+        String[] array = str.split("", -1);
+        ArrayList<String> pos= new ArrayList<>();
+        boolean cont=true;
+        for(int i=0; i<array.length;i++){
+            if(cont){
+                if (array[i].equals("S")){
+                    cont=false;
+                }else{
+                    if (!array[i].equals("\n")){
+                        pos.add(array[i]);
+                    }
+                }
+            }
+        }
+
+        List<String> r1=  pos.subList(1,9);
+        List<String> r2=  pos.subList(9,17);
+        List<String> r3=  pos.subList(17,25);
+        List<String> r4=  pos.subList(25,33);
+        List<String> r5=  pos.subList(33,41);
+        List<String> r6=  pos.subList(41,49);
+        List<String> r7=  pos.subList(49,57);
+        List<String> r8=  pos.subList(57,65);
+
+
+        String [][] matrix=new String[8][8];
+
+        matrix [0]= r8.toArray(new String[0]);
+        matrix [1]= r7.toArray(new String[0]);
+        matrix [2]= r6.toArray(new String[0]);
+        matrix [3]= r5.toArray(new String[0]);
+        matrix [4]= r4.toArray(new String[0]);
+        matrix [5]= r3.toArray(new String[0]);
+        matrix [6]= r2.toArray(new String[0]);
+        matrix [7]= r1.toArray(new String[0]);
+
+        moveBoard(matrix);
+    }
+
+    /**
+     * JAVA è ROW FIRST MA IL DISPLAY BOARD E TUTTA L'ACTIVITY è STATA INIZIALIZZATA AL CONTRARIO
+     *
+     */
+    private void moveBoard(String[][] matrix){
+        for (int row=0;row<8;row++){
+            for (int col=0; col<8; col++){
+                switch (matrix[row][col]){
+                    case "r":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.brook);
+                        break;
+                    case "n":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.bknight);
+                        break;
+                    case "b":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.bbishop);
+                        break;
+                    case "q":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.bqueen);
+                        break;
+                    case "k":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.bking);
+                        break;
+                    case "p":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.bpawn);
+                        break;
+                    case "R":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.wrook);
+                        break;
+                    case "N":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.wknight);
+                        break;
+                    case "B":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.wbishop);
+                        break;
+                    case "Q":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.wqueen);
+                        break;
+                    case "K":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.wking);
+                        break;
+                    case "P":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.wpawn);
+                        break;
+                    case ".":
+                        DisplayBoard[col][row].setBackgroundResource(0);
+                        break;
+
+                }
+            }
+        }
+    }
+
+    /**
+     * @param pos Final square of the moves
+     * @return List of coordinates
+     */
+    private Integer parseYAssis (int pos){
+
+        HashMap<Integer, Integer> Y = new HashMap<Integer, Integer>() {{
+            put(0,7);
+            put(1,6);
+            put(2,5);
+            put(3,4);
+            put(4,3);
+            put(5,2);
+            put(6,1);
+            put(7,0);
+        }};
+
+       return Y.get(pos);
+    }
+
+
+
+
+
+    /**
+     * Clear all color of a boards
      */
     @SuppressLint("ResourceAsColor")
     private void clearBoardColor(){
@@ -664,16 +650,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             add((TextView) findViewById(R.id.R071));
         }};
 
-        for (TextView[] d:DisplayBoardBackground){
+
+        for (TextView[] d : DisplayBoardBackground){
             for(TextView t:d){
                 if(dark.contains(t)){
-                    t.setBackgroundColor(R.color.colorBoardDark);
+                    t.setBackgroundColor(Color.parseColor("#F0BA8C29"));
                 }else {
-                    t.setBackgroundColor(R.color.colorBoardLight);
+                    t.setBackgroundColor(Color.parseColor("#F0F0D157"));
                 }
             }
         }
+
+
     }
+
+
+
     /**
      * Reset clicks
      */
@@ -691,24 +683,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void colorMove (Square s) {
         for (Move m : board.legalMoves()) {
             if (m.getFrom() == s) {
-                System.out.println(m.getTo());
-                System.out.println(parseMove(m.getTo()).get(0));
-                System.out.println(parseMove(m.getTo()).get(1));
                 DisplayBoardBackground[parseMove(m.getTo()).get(0)][parseMove(m.getTo()).get(1)].setBackgroundColor(R.color.colorSelected);
-
             }
-
-
         }
     }
-        /*
-        for (Move x : allowMoves) {
-            List<Integer> position = parseMove(x.getTo());
-            System.out.println(position.toString());
-            //DisplayBoard[Integer.parseInt(position.get(0))][Integer.parseInt(position.get(1))].setBackgroundColor(Color.parseColor("#1e5cb8"));
-
-        }*/
-
 
 
     /**
