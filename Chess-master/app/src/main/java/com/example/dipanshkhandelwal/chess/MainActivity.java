@@ -452,7 +452,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(isaMove(mo)){
                     board.doMove(mo);
                     clearBoardColor();
-                    parseMatrixBoard();
+                    moveBoard(parseBoard());
                     clearDuble();
                 }else {
                     clearBoardColor();
@@ -464,7 +464,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         if (board.isKingAttacked()){
-            colorRedking();
+            colorRedking(parseBoard());
         }
         if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
             System.out.println("scacco matto or Draw or stallo");
@@ -486,9 +486,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return false;
     }
 
-    
 
-    private void parseMatrixBoard(){
+    /**
+     * This function parse the board and create a matrix that return
+     * @return return a matrix represented the board
+     */
+    private String [][] parseBoard(){
         String str=board.toString();
 
         String[] array = str.split("", -1);
@@ -527,12 +530,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         matrix [6]= r2.toArray(new String[0]);
         matrix [7]= r1.toArray(new String[0]);
 
-        moveBoard(matrix);
+        return matrix;
     }
 
     /**
-     * JAVA è ROW FIRST MA IL DISPLAY BOARD E TUTTA L'ACTIVITY è STATA INIZIALIZZATA AL CONTRARIO
      *
+     *
+     * Remark: Java is Row first, but the display JAVA è ROW FIRST MA IL DISPLAY BOARD E TUTTA L'ACTIVITY è STATA INIZIALIZZATA AL CONTRARIO
      */
     private void moveBoard(String[][] matrix){
         for (int row=0;row<8;row++){
@@ -695,44 +699,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * This function color the king position if is under attak
      */
-    private void colorRedking(){
-        String str=board.toString();
-
-        String[] array = str.split("", -1);
-        ArrayList<String> pos= new ArrayList<>();
-        boolean cont=true;
-        for(int i=0; i<array.length;i++){
-            if(cont){
-                if (array[i].equals("S")){
-                    cont=false;
-                }else{
-                    if (!array[i].equals("\n")){
-                        pos.add(array[i]);
-                    }
-                }
-            }
-        }
-
-        List<String> r1=  pos.subList(1,9);
-        List<String> r2=  pos.subList(9,17);
-        List<String> r3=  pos.subList(17,25);
-        List<String> r4=  pos.subList(25,33);
-        List<String> r5=  pos.subList(33,41);
-        List<String> r6=  pos.subList(41,49);
-        List<String> r7=  pos.subList(49,57);
-        List<String> r8=  pos.subList(57,65);
-
-
-        String [][] matrix=new String[8][8];
-
-        matrix [0]= r8.toArray(new String[0]);
-        matrix [1]= r7.toArray(new String[0]);
-        matrix [2]= r6.toArray(new String[0]);
-        matrix [3]= r5.toArray(new String[0]);
-        matrix [4]= r4.toArray(new String[0]);
-        matrix [5]= r3.toArray(new String[0]);
-        matrix [6]= r2.toArray(new String[0]);
-        matrix [7]= r1.toArray(new String[0]);
+    private void colorRedking(String[][] matrix){
 
         String king;
         if (board.getSideToMove()== Side.WHITE){
