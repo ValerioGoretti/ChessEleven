@@ -19,6 +19,7 @@ import com.example.dipanshkhandelwal.chess.Pieces.Piece;
 import com.example.dipanshkhandelwal.chess.Pieces.Queen;
 import com.example.dipanshkhandelwal.chess.Pieces.Rook;
 import com.github.bhlangonijr.chesslib.Board;
+import com.github.bhlangonijr.chesslib.Side;
 import com.github.bhlangonijr.chesslib.Square;
 import com.github.bhlangonijr.chesslib.move.Move;
 
@@ -462,6 +463,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
+        if (board.isKingAttacked()){
+            colorRedking();
+        }
         if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
             System.out.println("scacco matto or Draw or stallo");
             game_over.setVisibility(View.VISIBLE);
@@ -469,6 +473,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Dato che poi per le ripetizioni trova altre mosse meglio cambiare pagina
              */
         }
+
 
     }
 
@@ -687,6 +692,62 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * This function color the king position if is under attak
+     */
+    private void colorRedking(){
+        String str=board.toString();
+
+        String[] array = str.split("", -1);
+        ArrayList<String> pos= new ArrayList<>();
+        boolean cont=true;
+        for(int i=0; i<array.length;i++){
+            if(cont){
+                if (array[i].equals("S")){
+                    cont=false;
+                }else{
+                    if (!array[i].equals("\n")){
+                        pos.add(array[i]);
+                    }
+                }
+            }
+        }
+
+        List<String> r1=  pos.subList(1,9);
+        List<String> r2=  pos.subList(9,17);
+        List<String> r3=  pos.subList(17,25);
+        List<String> r4=  pos.subList(25,33);
+        List<String> r5=  pos.subList(33,41);
+        List<String> r6=  pos.subList(41,49);
+        List<String> r7=  pos.subList(49,57);
+        List<String> r8=  pos.subList(57,65);
+
+
+        String [][] matrix=new String[8][8];
+
+        matrix [0]= r8.toArray(new String[0]);
+        matrix [1]= r7.toArray(new String[0]);
+        matrix [2]= r6.toArray(new String[0]);
+        matrix [3]= r5.toArray(new String[0]);
+        matrix [4]= r4.toArray(new String[0]);
+        matrix [5]= r3.toArray(new String[0]);
+        matrix [6]= r2.toArray(new String[0]);
+        matrix [7]= r1.toArray(new String[0]);
+
+        String king;
+        if (board.getSideToMove()== Side.WHITE){
+            king="K";
+        }else {
+            king="k";
+        }
+
+        for (int row=0;row<8;row++){
+            for (int col=0; col<8; col++){
+                if (matrix[row][col].equals(king))
+                    DisplayBoardBackground[col][row].setBackgroundColor(Color.parseColor("#fc0703"));
+            }
+        }
+    }
 
     /**
      * @param pos Final square of the moves
