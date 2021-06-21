@@ -1,81 +1,51 @@
 package com.example.dipanshkhandelwal.chess;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.dipanshkhandelwal.chess.Pieces.Bishop;
 import com.example.dipanshkhandelwal.chess.Pieces.King;
 import com.example.dipanshkhandelwal.chess.Pieces.Knight;
 import com.example.dipanshkhandelwal.chess.Pieces.Pawn;
-import com.example.dipanshkhandelwal.chess.Pieces.Piece;
 import com.example.dipanshkhandelwal.chess.Pieces.Queen;
 import com.example.dipanshkhandelwal.chess.Pieces.Rook;
+import com.github.bhlangonijr.chesslib.Board;
+import com.github.bhlangonijr.chesslib.Piece;
+import com.github.bhlangonijr.chesslib.Side;
+import com.github.bhlangonijr.chesslib.Square;
+import com.github.bhlangonijr.chesslib.move.Move;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public Boolean FirstPlayerTurn;
-    public ArrayList<Coordinates> listOfCoordinates = new ArrayList<>();
-    public Position[][] Board = new Position[8][8];
-    public Position[][] Board2 = new Position[8][8];
-    public Boolean AnythingSelected = false;
-    public Coordinates lastPos = null ;
-    public Coordinates clickedPosition = new Coordinates(0, 0);
+    public Square c1=null;
+    public Square c2=null;
+    public Square click = null;
     public TextView game_over;
     public TextView[][] DisplayBoard = new TextView[8][8];
     public TextView[][] DisplayBoardBackground = new TextView[8][8];
-    public ArrayList<Position[][]> LastMoves = new ArrayList<>();
+    public TextView[][] DisplayBoardBackgroundSelected = new TextView[8][8];
     public LinearLayout pawn_choices;
-    public int numberOfMoves;
-
-    Piece bKing;
-    Piece wKing;
-
-    Piece bQueen;
-    Piece wQueen;
-
-    Piece bKnight1;
-    Piece bKnight2;
-    Piece wKnight1;
-    Piece wKnight2;
-
-    Piece bRook1;
-    Piece bRook2;
-    Piece wRook1;
-    Piece wRook2;
-
-    Piece bBishop1;
-    Piece bBishop2;
-    Piece wBishop1;
-    Piece wBishop2;
-
-    Piece bPawn1;
-    Piece bPawn2;
-    Piece bPawn3;
-    Piece bPawn4;
-    Piece bPawn5;
-    Piece bPawn6;
-    Piece bPawn7;
-    Piece bPawn8;
-
-    Piece wPawn1;
-    Piece wPawn2;
-    Piece wPawn3;
-    Piece wPawn4;
-    Piece wPawn5;
-    Piece wPawn6;
-    Piece wPawn7;
-    Piece wPawn8;
+    public Board board;
+    private Piece lastChoice=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Making notification bar transparent
         if (Build.VERSION.SDK_INT >= 21) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
@@ -83,870 +53,820 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initializeBoard();
 
-        game_over = (TextView)findViewById(R.id.game_over);
-        pawn_choices = (LinearLayout)findViewById(R.id.pawn_chioces);
+        game_over = (TextView) findViewById(R.id.game_over);
+        pawn_choices = (LinearLayout) findViewById(R.id.pawn_chioces);
 
         game_over.setVisibility(View.INVISIBLE);
         pawn_choices.setVisibility(View.INVISIBLE);
     }
 
     private void initializeBoard() {
-        bKing = new King(false);
-        wKing = new King(true);
-
-        bQueen = new Queen(false);
-        wQueen = new Queen(true);
-
-        bRook1 = new Rook(false);
-        bRook2 = new Rook(false);
-        wRook1 = new Rook(true);
-        wRook2 = new Rook(true);
-
-        bKnight1 = new Knight(false);
-        bKnight2 = new Knight(false);
-        wKnight1 = new Knight(true);
-        wKnight2 = new Knight(true);
-
-        bBishop1 = new Bishop(false);
-        bBishop2 = new Bishop(false);
-        wBishop1 = new Bishop(true);
-        wBishop2 = new Bishop(true);
-
-        bPawn1 = new Pawn(false);
-        bPawn2 = new Pawn(false);
-        bPawn3 = new Pawn(false);
-        bPawn4 = new Pawn(false);
-        bPawn5 = new Pawn(false);
-        bPawn6 = new Pawn(false);
-        bPawn7 = new Pawn(false);
-        bPawn8 = new Pawn(false);
-
-        wPawn1 = new Pawn(true);
-        wPawn2 = new Pawn(true);
-        wPawn3 = new Pawn(true);
-        wPawn4 = new Pawn(true);
-        wPawn5 = new Pawn(true);
-        wPawn6 = new Pawn(true);
-        wPawn7 = new Pawn(true);
-        wPawn8 = new Pawn(true);
-
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                Board[i][j] = new Position(null);
-                Board2[i][j] = new Position(null);
-            }
-        }
-
-        Board[0][7].setPiece(wRook1);
-        Board[1][7].setPiece(wKnight1);
-        Board[2][7].setPiece(wBishop1);
-        Board[3][7].setPiece(wQueen);
-        Board[4][7].setPiece(wKing);
-        Board[5][7].setPiece(wBishop2);
-        Board[6][7].setPiece(wKnight2);
-        Board[7][7].setPiece(wRook2);
-
-        Board[0][6].setPiece(wPawn1);
-        Board[1][6].setPiece(wPawn2);
-        Board[2][6].setPiece(wPawn3);
-        Board[3][6].setPiece(wPawn4);
-        Board[4][6].setPiece(wPawn5);
-        Board[5][6].setPiece(wPawn6);
-        Board[6][6].setPiece(wPawn7);
-        Board[7][6].setPiece(wPawn8);
-
-        Board[0][0].setPiece(bRook1);
-        Board[1][0].setPiece(bKnight1);
-        Board[2][0].setPiece(bBishop1);
-        Board[3][0].setPiece(bQueen);
-        Board[4][0].setPiece(bKing);
-        Board[5][0].setPiece(bBishop2);
-        Board[6][0].setPiece(bKnight2);
-        Board[7][0].setPiece(bRook2);
-
-        Board[0][1].setPiece(bPawn1);
-        Board[1][1].setPiece(bPawn2);
-        Board[2][1].setPiece(bPawn3);
-        Board[3][1].setPiece(bPawn4);
-        Board[4][1].setPiece(bPawn5);
-        Board[5][1].setPiece(bPawn6);
-        Board[6][1].setPiece(bPawn7);
-        Board[7][1].setPiece(bPawn8);
+        board = new Board();
 
         DisplayBoard[0][0] = (TextView) findViewById(R.id.R00);
-        DisplayBoardBackground[0][0] = (TextView) findViewById(R.id.R000);
+        DisplayBoard[0][0].setBackgroundResource(R.drawable.wrook);
         DisplayBoard[1][0] = (TextView) findViewById(R.id.R10);
-        DisplayBoardBackground[1][0] = (TextView) findViewById(R.id.R010);
+        DisplayBoard[1][0].setBackgroundResource(R.drawable.wknight);
         DisplayBoard[2][0] = (TextView) findViewById(R.id.R20);
-        DisplayBoardBackground[2][0] = (TextView) findViewById(R.id.R020);
+        DisplayBoard[2][0].setBackgroundResource(R.drawable.wbishop);
         DisplayBoard[3][0] = (TextView) findViewById(R.id.R30);
-        DisplayBoardBackground[3][0] = (TextView) findViewById(R.id.R030);
+        DisplayBoard[3][0].setBackgroundResource(R.drawable.wqueen);
         DisplayBoard[4][0] = (TextView) findViewById(R.id.R40);
-        DisplayBoardBackground[4][0] = (TextView) findViewById(R.id.R040);
+        DisplayBoard[4][0].setBackgroundResource(R.drawable.wking);
         DisplayBoard[5][0] = (TextView) findViewById(R.id.R50);
-        DisplayBoardBackground[5][0] = (TextView) findViewById(R.id.R050);
+        DisplayBoard[5][0].setBackgroundResource(R.drawable.wbishop);
         DisplayBoard[6][0] = (TextView) findViewById(R.id.R60);
-        DisplayBoardBackground[6][0] = (TextView) findViewById(R.id.R060);
+        DisplayBoard[6][0].setBackgroundResource(R.drawable.wknight);
         DisplayBoard[7][0] = (TextView) findViewById(R.id.R70);
-        DisplayBoardBackground[7][0] = (TextView) findViewById(R.id.R070);
+        DisplayBoard[7][0].setBackgroundResource(R.drawable.wrook);
+
 
         DisplayBoard[0][1] = (TextView) findViewById(R.id.R01);
-        DisplayBoardBackground[0][1] = (TextView) findViewById(R.id.R001);
+        DisplayBoard[0][1].setBackgroundResource(R.drawable.wpawn);
         DisplayBoard[1][1] = (TextView) findViewById(R.id.R11);
-        DisplayBoardBackground[1][1] = (TextView) findViewById(R.id.R011);
+        DisplayBoard[1][1].setBackgroundResource(R.drawable.wpawn);
         DisplayBoard[2][1] = (TextView) findViewById(R.id.R21);
-        DisplayBoardBackground[2][1] = (TextView) findViewById(R.id.R021);
+        DisplayBoard[2][1].setBackgroundResource(R.drawable.wpawn);
         DisplayBoard[3][1] = (TextView) findViewById(R.id.R31);
-        DisplayBoardBackground[3][1] = (TextView) findViewById(R.id.R031);
+        DisplayBoard[3][1].setBackgroundResource(R.drawable.wpawn);
         DisplayBoard[4][1] = (TextView) findViewById(R.id.R41);
-        DisplayBoardBackground[4][1] = (TextView) findViewById(R.id.R041);
+        DisplayBoard[4][1].setBackgroundResource(R.drawable.wpawn);
         DisplayBoard[5][1] = (TextView) findViewById(R.id.R51);
-        DisplayBoardBackground[5][1] = (TextView) findViewById(R.id.R051);
+        DisplayBoard[5][1].setBackgroundResource(R.drawable.wpawn);
         DisplayBoard[6][1] = (TextView) findViewById(R.id.R61);
-        DisplayBoardBackground[6][1] = (TextView) findViewById(R.id.R061);
+        DisplayBoard[6][1].setBackgroundResource(R.drawable.wpawn);
         DisplayBoard[7][1] = (TextView) findViewById(R.id.R71);
-        DisplayBoardBackground[7][1] = (TextView) findViewById(R.id.R071);
+        DisplayBoard[7][1].setBackgroundResource(R.drawable.wpawn);
 
         DisplayBoard[0][2] = (TextView) findViewById(R.id.R02);
-        DisplayBoardBackground[0][2] = (TextView) findViewById(R.id.R002);
         DisplayBoard[1][2] = (TextView) findViewById(R.id.R12);
-        DisplayBoardBackground[1][2] = (TextView) findViewById(R.id.R012);
         DisplayBoard[2][2] = (TextView) findViewById(R.id.R22);
-        DisplayBoardBackground[2][2] = (TextView) findViewById(R.id.R022);
         DisplayBoard[3][2] = (TextView) findViewById(R.id.R32);
-        DisplayBoardBackground[3][2] = (TextView) findViewById(R.id.R032);
         DisplayBoard[4][2] = (TextView) findViewById(R.id.R42);
-        DisplayBoardBackground[4][2] = (TextView) findViewById(R.id.R042);
         DisplayBoard[5][2] = (TextView) findViewById(R.id.R52);
-        DisplayBoardBackground[5][2] = (TextView) findViewById(R.id.R052);
         DisplayBoard[6][2] = (TextView) findViewById(R.id.R62);
-        DisplayBoardBackground[6][2] = (TextView) findViewById(R.id.R062);
         DisplayBoard[7][2] = (TextView) findViewById(R.id.R72);
+        DisplayBoard[0][3] = (TextView) findViewById(R.id.R03);
+        DisplayBoard[1][3] = (TextView) findViewById(R.id.R13);
+        DisplayBoard[2][3] = (TextView) findViewById(R.id.R23);
+        DisplayBoard[3][3] = (TextView) findViewById(R.id.R33);
+        DisplayBoard[4][3] = (TextView) findViewById(R.id.R43);
+        DisplayBoard[5][3] = (TextView) findViewById(R.id.R53);
+        DisplayBoard[6][3] = (TextView) findViewById(R.id.R63);
+        DisplayBoard[7][3] = (TextView) findViewById(R.id.R73);
+        DisplayBoard[0][4] = (TextView) findViewById(R.id.R04);
+        DisplayBoard[1][4] = (TextView) findViewById(R.id.R14);
+        DisplayBoard[2][4] = (TextView) findViewById(R.id.R24);
+        DisplayBoard[3][4] = (TextView) findViewById(R.id.R34);
+        DisplayBoard[4][4] = (TextView) findViewById(R.id.R44);
+        DisplayBoard[5][4] = (TextView) findViewById(R.id.R54);
+        DisplayBoard[6][4] = (TextView) findViewById(R.id.R64);
+        DisplayBoard[7][4] = (TextView) findViewById(R.id.R74);
+        DisplayBoard[0][5] = (TextView) findViewById(R.id.R05);
+        DisplayBoard[1][5] = (TextView) findViewById(R.id.R15);
+        DisplayBoard[2][5] = (TextView) findViewById(R.id.R25);
+        DisplayBoard[3][5] = (TextView) findViewById(R.id.R35);
+        DisplayBoard[4][5] = (TextView) findViewById(R.id.R45);
+        DisplayBoard[5][5] = (TextView) findViewById(R.id.R55);
+        DisplayBoard[6][5] = (TextView) findViewById(R.id.R65);
+        DisplayBoard[7][5] = (TextView) findViewById(R.id.R75);
+        DisplayBoard[0][6] = (TextView) findViewById(R.id.R06);
+        DisplayBoard[0][6].setBackgroundResource(R.drawable.bpawn);
+        DisplayBoard[1][6] = (TextView) findViewById(R.id.R16);
+        DisplayBoard[1][6].setBackgroundResource(R.drawable.bpawn);
+        DisplayBoard[2][6] = (TextView) findViewById(R.id.R26);
+        DisplayBoard[2][6].setBackgroundResource(R.drawable.bpawn);
+        DisplayBoard[3][6] = (TextView) findViewById(R.id.R36);
+        DisplayBoard[3][6].setBackgroundResource(R.drawable.bpawn);
+        DisplayBoard[4][6] = (TextView) findViewById(R.id.R46);
+        DisplayBoard[4][6].setBackgroundResource(R.drawable.bpawn);
+        DisplayBoard[5][6] = (TextView) findViewById(R.id.R56);
+        DisplayBoard[5][6].setBackgroundResource(R.drawable.bpawn);
+        DisplayBoard[6][6] = (TextView) findViewById(R.id.R66);
+        DisplayBoard[6][6].setBackgroundResource(R.drawable.bpawn);
+        DisplayBoard[7][6] = (TextView) findViewById(R.id.R76);
+        DisplayBoard[7][6].setBackgroundResource(R.drawable.bpawn);
+        DisplayBoard[0][7] = (TextView) findViewById(R.id.R07);
+        DisplayBoard[0][7].setBackgroundResource(R.drawable.brook);
+        DisplayBoard[1][7] = (TextView) findViewById(R.id.R17);
+        DisplayBoard[1][7].setBackgroundResource(R.drawable.bknight);
+        DisplayBoard[2][7] = (TextView) findViewById(R.id.R27);
+        DisplayBoard[2][7].setBackgroundResource(R.drawable.bbishop);
+        DisplayBoard[3][7] = (TextView) findViewById(R.id.R37);
+        DisplayBoard[3][7].setBackgroundResource(R.drawable.bqueen);
+        DisplayBoard[4][7] = (TextView) findViewById(R.id.R47);
+        DisplayBoard[4][7].setBackgroundResource(R.drawable.bking);
+        DisplayBoard[5][7] = (TextView) findViewById(R.id.R57);
+        DisplayBoard[5][7].setBackgroundResource(R.drawable.bbishop);
+        DisplayBoard[6][7] = (TextView) findViewById(R.id.R67);
+        DisplayBoard[6][7].setBackgroundResource(R.drawable.bknight);
+        DisplayBoard[7][7] = (TextView) findViewById(R.id.R77);
+        DisplayBoard[7][7].setBackgroundResource(R.drawable.brook);
+
+        DisplayBoardBackground[0][0] = (TextView) findViewById(R.id.R000);
+        DisplayBoardBackground[1][0] = (TextView) findViewById(R.id.R010);
+        DisplayBoardBackground[2][0] = (TextView) findViewById(R.id.R020);
+        DisplayBoardBackground[3][0] = (TextView) findViewById(R.id.R030);
+        DisplayBoardBackground[4][0] = (TextView) findViewById(R.id.R040);
+        DisplayBoardBackground[5][0] = (TextView) findViewById(R.id.R050);
+        DisplayBoardBackground[6][0] = (TextView) findViewById(R.id.R060);
+        DisplayBoardBackground[7][0] = (TextView) findViewById(R.id.R070);
+
+        DisplayBoardBackground[0][1] = (TextView) findViewById(R.id.R001);
+        DisplayBoardBackground[1][1] = (TextView) findViewById(R.id.R011);
+        DisplayBoardBackground[2][1] = (TextView) findViewById(R.id.R021);
+        DisplayBoardBackground[3][1] = (TextView) findViewById(R.id.R031);
+        DisplayBoardBackground[4][1] = (TextView) findViewById(R.id.R041);
+        DisplayBoardBackground[5][1] = (TextView) findViewById(R.id.R051);
+        DisplayBoardBackground[6][1] = (TextView) findViewById(R.id.R061);
+        DisplayBoardBackground[7][1] = (TextView) findViewById(R.id.R071);
+
+        DisplayBoardBackground[0][2] = (TextView) findViewById(R.id.R002);
+        DisplayBoardBackground[1][2] = (TextView) findViewById(R.id.R012);
+        DisplayBoardBackground[2][2] = (TextView) findViewById(R.id.R022);
+        DisplayBoardBackground[3][2] = (TextView) findViewById(R.id.R032);
+        DisplayBoardBackground[4][2] = (TextView) findViewById(R.id.R042);
+        DisplayBoardBackground[5][2] = (TextView) findViewById(R.id.R052);
+        DisplayBoardBackground[6][2] = (TextView) findViewById(R.id.R062);
         DisplayBoardBackground[7][2] = (TextView) findViewById(R.id.R072);
 
-        DisplayBoard[0][3] = (TextView) findViewById(R.id.R03);
         DisplayBoardBackground[0][3] = (TextView) findViewById(R.id.R003);
-        DisplayBoard[1][3] = (TextView) findViewById(R.id.R13);
         DisplayBoardBackground[1][3] = (TextView) findViewById(R.id.R013);
-        DisplayBoard[2][3] = (TextView) findViewById(R.id.R23);
         DisplayBoardBackground[2][3] = (TextView) findViewById(R.id.R023);
-        DisplayBoard[3][3] = (TextView) findViewById(R.id.R33);
         DisplayBoardBackground[3][3] = (TextView) findViewById(R.id.R033);
-        DisplayBoard[4][3] = (TextView) findViewById(R.id.R43);
         DisplayBoardBackground[4][3] = (TextView) findViewById(R.id.R043);
-        DisplayBoard[5][3] = (TextView) findViewById(R.id.R53);
         DisplayBoardBackground[5][3] = (TextView) findViewById(R.id.R053);
-        DisplayBoard[6][3] = (TextView) findViewById(R.id.R63);
         DisplayBoardBackground[6][3] = (TextView) findViewById(R.id.R063);
-        DisplayBoard[7][3] = (TextView) findViewById(R.id.R73);
         DisplayBoardBackground[7][3] = (TextView) findViewById(R.id.R073);
 
-        DisplayBoard[0][4] = (TextView) findViewById(R.id.R04);
         DisplayBoardBackground[0][4] = (TextView) findViewById(R.id.R004);
-        DisplayBoard[1][4] = (TextView) findViewById(R.id.R14);
         DisplayBoardBackground[1][4] = (TextView) findViewById(R.id.R014);
-        DisplayBoard[2][4] = (TextView) findViewById(R.id.R24);
         DisplayBoardBackground[2][4] = (TextView) findViewById(R.id.R024);
-        DisplayBoard[3][4] = (TextView) findViewById(R.id.R34);
         DisplayBoardBackground[3][4] = (TextView) findViewById(R.id.R034);
-        DisplayBoard[4][4] = (TextView) findViewById(R.id.R44);
         DisplayBoardBackground[4][4] = (TextView) findViewById(R.id.R044);
-        DisplayBoard[5][4] = (TextView) findViewById(R.id.R54);
         DisplayBoardBackground[5][4] = (TextView) findViewById(R.id.R054);
-        DisplayBoard[6][4] = (TextView) findViewById(R.id.R64);
         DisplayBoardBackground[6][4] = (TextView) findViewById(R.id.R064);
-        DisplayBoard[7][4] = (TextView) findViewById(R.id.R74);
         DisplayBoardBackground[7][4] = (TextView) findViewById(R.id.R074);
 
-        DisplayBoard[0][5] = (TextView) findViewById(R.id.R05);
         DisplayBoardBackground[0][5] = (TextView) findViewById(R.id.R005);
-        DisplayBoard[1][5] = (TextView) findViewById(R.id.R15);
         DisplayBoardBackground[1][5] = (TextView) findViewById(R.id.R015);
-        DisplayBoard[2][5] = (TextView) findViewById(R.id.R25);
         DisplayBoardBackground[2][5] = (TextView) findViewById(R.id.R025);
-        DisplayBoard[3][5] = (TextView) findViewById(R.id.R35);
         DisplayBoardBackground[3][5] = (TextView) findViewById(R.id.R035);
-        DisplayBoard[4][5] = (TextView) findViewById(R.id.R45);
         DisplayBoardBackground[4][5] = (TextView) findViewById(R.id.R045);
-        DisplayBoard[5][5] = (TextView) findViewById(R.id.R55);
         DisplayBoardBackground[5][5] = (TextView) findViewById(R.id.R055);
-        DisplayBoard[6][5] = (TextView) findViewById(R.id.R65);
         DisplayBoardBackground[6][5] = (TextView) findViewById(R.id.R065);
-        DisplayBoard[7][5] = (TextView) findViewById(R.id.R75);
         DisplayBoardBackground[7][5] = (TextView) findViewById(R.id.R075);
 
-        DisplayBoard[0][6] = (TextView) findViewById(R.id.R06);
         DisplayBoardBackground[0][6] = (TextView) findViewById(R.id.R006);
-        DisplayBoard[1][6] = (TextView) findViewById(R.id.R16);
         DisplayBoardBackground[1][6] = (TextView) findViewById(R.id.R016);
-        DisplayBoard[2][6] = (TextView) findViewById(R.id.R26);
         DisplayBoardBackground[2][6] = (TextView) findViewById(R.id.R026);
-        DisplayBoard[3][6] = (TextView) findViewById(R.id.R36);
         DisplayBoardBackground[3][6] = (TextView) findViewById(R.id.R036);
-        DisplayBoard[4][6] = (TextView) findViewById(R.id.R46);
         DisplayBoardBackground[4][6] = (TextView) findViewById(R.id.R046);
-        DisplayBoard[5][6] = (TextView) findViewById(R.id.R56);
         DisplayBoardBackground[5][6] = (TextView) findViewById(R.id.R056);
-        DisplayBoard[6][6] = (TextView) findViewById(R.id.R66);
         DisplayBoardBackground[6][6] = (TextView) findViewById(R.id.R066);
-        DisplayBoard[7][6] = (TextView) findViewById(R.id.R76);
         DisplayBoardBackground[7][6] = (TextView) findViewById(R.id.R076);
 
-        DisplayBoard[0][7] = (TextView) findViewById(R.id.R07);
         DisplayBoardBackground[0][7] = (TextView) findViewById(R.id.R007);
-        DisplayBoard[1][7] = (TextView) findViewById(R.id.R17);
         DisplayBoardBackground[1][7] = (TextView) findViewById(R.id.R017);
-        DisplayBoard[2][7] = (TextView) findViewById(R.id.R27);
         DisplayBoardBackground[2][7] = (TextView) findViewById(R.id.R027);
-        DisplayBoard[3][7] = (TextView) findViewById(R.id.R37);
         DisplayBoardBackground[3][7] = (TextView) findViewById(R.id.R037);
-        DisplayBoard[4][7] = (TextView) findViewById(R.id.R47);
         DisplayBoardBackground[4][7] = (TextView) findViewById(R.id.R047);
-        DisplayBoard[5][7] = (TextView) findViewById(R.id.R57);
         DisplayBoardBackground[5][7] = (TextView) findViewById(R.id.R057);
-        DisplayBoard[6][7] = (TextView) findViewById(R.id.R67);
         DisplayBoardBackground[6][7] = (TextView) findViewById(R.id.R067);
-        DisplayBoard[7][7] = (TextView) findViewById(R.id.R77);
         DisplayBoardBackground[7][7] = (TextView) findViewById(R.id.R077);
 
-        for(int g=0;g<8;g++){
-            for(int h=0;h<8;h++){
-                if(Board[g][h].getPiece()==null){
-                    Board2[g][h].setPiece(null);
-                }else{
-                    Board2[g][h].setPiece(Board[g][h].getPiece());
-                }
-            }
-        }
+        /*
+        -----------------
+         */
+        DisplayBoardBackgroundSelected[0][0] = (TextView) findViewById(R.id.RO000);
+        DisplayBoardBackgroundSelected[1][0] = (TextView) findViewById(R.id.RO010);
+        DisplayBoardBackgroundSelected[2][0] = (TextView) findViewById(R.id.RO020);
+        DisplayBoardBackgroundSelected[3][0] = (TextView) findViewById(R.id.RO030);
+        DisplayBoardBackgroundSelected[4][0] = (TextView) findViewById(R.id.RO040);
+        DisplayBoardBackgroundSelected[5][0] = (TextView) findViewById(R.id.RO050);
+        DisplayBoardBackgroundSelected[6][0] = (TextView) findViewById(R.id.RO060);
+        DisplayBoardBackgroundSelected[7][0] = (TextView) findViewById(R.id.RO070);
 
-        numberOfMoves = 0;
-        AnythingSelected = false;
-        FirstPlayerTurn = true;
-        setBoard();
+        DisplayBoardBackgroundSelected[0][1] = (TextView) findViewById(R.id.RO001);
+        DisplayBoardBackgroundSelected[1][1] = (TextView) findViewById(R.id.RO011);
+        DisplayBoardBackgroundSelected[2][1] = (TextView) findViewById(R.id.RO021);
+        DisplayBoardBackgroundSelected[3][1] = (TextView) findViewById(R.id.RO031);
+        DisplayBoardBackgroundSelected[4][1] = (TextView) findViewById(R.id.RO041);
+        DisplayBoardBackgroundSelected[5][1] = (TextView) findViewById(R.id.RO051);
+        DisplayBoardBackgroundSelected[6][1] = (TextView) findViewById(R.id.RO061);
+        DisplayBoardBackgroundSelected[7][1] = (TextView) findViewById(R.id.RO071);
+
+        DisplayBoardBackgroundSelected[0][2] = (TextView) findViewById(R.id.RO002);
+        DisplayBoardBackgroundSelected[1][2] = (TextView) findViewById(R.id.RO012);
+        DisplayBoardBackgroundSelected[2][2] = (TextView) findViewById(R.id.RO022);
+        DisplayBoardBackgroundSelected[3][2] = (TextView) findViewById(R.id.RO032);
+        DisplayBoardBackgroundSelected[4][2] = (TextView) findViewById(R.id.RO042);
+        DisplayBoardBackgroundSelected[5][2] = (TextView) findViewById(R.id.RO052);
+        DisplayBoardBackgroundSelected[6][2] = (TextView) findViewById(R.id.RO062);
+        DisplayBoardBackgroundSelected[7][2] = (TextView) findViewById(R.id.RO072);
+
+        DisplayBoardBackgroundSelected[0][3] = (TextView) findViewById(R.id.RO003);
+        DisplayBoardBackgroundSelected[1][3] = (TextView) findViewById(R.id.RO013);
+        DisplayBoardBackgroundSelected[2][3] = (TextView) findViewById(R.id.RO023);
+        DisplayBoardBackgroundSelected[3][3] = (TextView) findViewById(R.id.RO033);
+        DisplayBoardBackgroundSelected[4][3] = (TextView) findViewById(R.id.RO043);
+        DisplayBoardBackgroundSelected[5][3] = (TextView) findViewById(R.id.RO053);
+        DisplayBoardBackgroundSelected[6][3] = (TextView) findViewById(R.id.RO063);
+        DisplayBoardBackgroundSelected[7][3] = (TextView) findViewById(R.id.RO073);
+
+        DisplayBoardBackgroundSelected[0][4] = (TextView) findViewById(R.id.RO004);
+        DisplayBoardBackgroundSelected[1][4] = (TextView) findViewById(R.id.RO014);
+        DisplayBoardBackgroundSelected[2][4] = (TextView) findViewById(R.id.RO024);
+        DisplayBoardBackgroundSelected[3][4] = (TextView) findViewById(R.id.RO034);
+        DisplayBoardBackgroundSelected[4][4] = (TextView) findViewById(R.id.RO044);
+        DisplayBoardBackgroundSelected[5][4] = (TextView) findViewById(R.id.RO054);
+        DisplayBoardBackgroundSelected[6][4] = (TextView) findViewById(R.id.RO064);
+        DisplayBoardBackgroundSelected[7][4] = (TextView) findViewById(R.id.RO074);
+
+        DisplayBoardBackgroundSelected[0][5] = (TextView) findViewById(R.id.RO005);
+        DisplayBoardBackgroundSelected[1][5] = (TextView) findViewById(R.id.RO015);
+        DisplayBoardBackgroundSelected[2][5] = (TextView) findViewById(R.id.RO025);
+        DisplayBoardBackgroundSelected[3][5] = (TextView) findViewById(R.id.RO035);
+        DisplayBoardBackgroundSelected[4][5] = (TextView) findViewById(R.id.RO045);
+        DisplayBoardBackgroundSelected[5][5] = (TextView) findViewById(R.id.RO055);
+        DisplayBoardBackgroundSelected[6][5] = (TextView) findViewById(R.id.RO065);
+        DisplayBoardBackgroundSelected[7][5] = (TextView) findViewById(R.id.RO075);
+
+        DisplayBoardBackgroundSelected[0][6] = (TextView) findViewById(R.id.RO006);
+        DisplayBoardBackgroundSelected[1][6] = (TextView) findViewById(R.id.RO016);
+        DisplayBoardBackgroundSelected[2][6] = (TextView) findViewById(R.id.RO026);
+        DisplayBoardBackgroundSelected[3][6] = (TextView) findViewById(R.id.RO036);
+        DisplayBoardBackgroundSelected[4][6] = (TextView) findViewById(R.id.RO046);
+        DisplayBoardBackgroundSelected[5][6] = (TextView) findViewById(R.id.RO056);
+        DisplayBoardBackgroundSelected[6][6] = (TextView) findViewById(R.id.RO066);
+        DisplayBoardBackgroundSelected[7][6] = (TextView) findViewById(R.id.RO076);
+
+        DisplayBoardBackgroundSelected[0][7] = (TextView) findViewById(R.id.RO007);
+        DisplayBoardBackgroundSelected[1][7] = (TextView) findViewById(R.id.RO017);
+        DisplayBoardBackgroundSelected[2][7] = (TextView) findViewById(R.id.RO027);
+        DisplayBoardBackgroundSelected[3][7] = (TextView) findViewById(R.id.RO037);
+        DisplayBoardBackgroundSelected[4][7] = (TextView) findViewById(R.id.RO047);
+        DisplayBoardBackgroundSelected[5][7] = (TextView) findViewById(R.id.RO057);
+        DisplayBoardBackgroundSelected[6][7] = (TextView) findViewById(R.id.RO067);
+        DisplayBoardBackgroundSelected[7][7] = (TextView) findViewById(R.id.RO077);
+
     }
 
-    private void setBoard() {
-
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-
-                Piece p = Board[i][j].getPiece();
-                int x;
-
-                if (Board[i][j].getPiece() != null) {
-                    if (p instanceof King) x = 0;
-                    else if (p instanceof Queen) x = 1;
-                    else if (p instanceof Rook) x = 2;
-                    else if (p instanceof Bishop) x = 3;
-                    else if (p instanceof Knight) x = 4;
-                    else if (p instanceof Pawn) x = 5;
-                    else x = 6;
-
-                    switch (x) {
-                        case 0:
-                            if (p.isWhite()) {
-                                DisplayBoard[i][j].setBackgroundResource(R.drawable.wking);
-                            } else {
-                                DisplayBoard[i][j].setBackgroundResource(R.drawable.bking);
-                            }
-                            break;
-
-                        case 1:
-                            if (p.isWhite()) {
-                                DisplayBoard[i][j].setBackgroundResource(R.drawable.wqueen);
-                            } else {
-                                DisplayBoard[i][j].setBackgroundResource(R.drawable.bqueen);
-                            }
-                            break;
-
-                        case 2:
-                            if (p.isWhite()) {
-                                DisplayBoard[i][j].setBackgroundResource(R.drawable.wrook);
-                            } else {
-                                DisplayBoard[i][j].setBackgroundResource(R.drawable.brook);
-                            }
-                            break;
-
-                        case 3:
-                            if (p.isWhite()) {
-                                DisplayBoard[i][j].setBackgroundResource(R.drawable.wbishop);
-                            } else {
-                                DisplayBoard[i][j].setBackgroundResource(R.drawable.bbishop);
-                            }
-                            break;
-
-                        case 4:
-                            if (p.isWhite()) {
-                                DisplayBoard[i][j].setBackgroundResource(R.drawable.wknight);
-                            } else {
-                                DisplayBoard[i][j].setBackgroundResource(R.drawable.bknight);
-                            }
-                            break;
-
-                        case 5:
-                            if (p.isWhite()) {
-                                DisplayBoard[i][j].setBackgroundResource(R.drawable.wpawn);
-                            } else {
-                                DisplayBoard[i][j].setBackgroundResource(R.drawable.bpawn);
-                            }
-                            break;
-
-                        default:
-
-                    }
-                }else{
-                    DisplayBoard[i][j].setBackgroundResource(0);
-                }
-            }
-        }
-        isKingInDanger();
-    }
 
     @Override
     public void onClick(View v) {
-
+        // Assign the Square clicked by the user to click
         switch (v.getId()) {
             case R.id.R00:
-                clickedPosition = new Coordinates(0, 0);
+                click = Square.A1;
                 break;
             case R.id.R10:
-                clickedPosition.setX(1);
-                clickedPosition.setY(0);
+                click = Square.B1;
                 break;
             case R.id.R20:
-                clickedPosition.setX(2);
-                clickedPosition.setY(0);
+                click = Square.C1;
                 break;
             case R.id.R30:
-                clickedPosition.setX(3);
-                clickedPosition.setY(0);
+                click = Square.D1;
                 break;
             case R.id.R40:
-                clickedPosition.setX(4);
-                clickedPosition.setY(0);
+                click = Square.E1;
                 break;
             case R.id.R50:
-                clickedPosition.setX(5);
-                clickedPosition.setY(0);
+                click = Square.F1;
                 break;
             case R.id.R60:
-                clickedPosition.setX(6);
-                clickedPosition.setY(0);
+                click = Square.G1;
                 break;
             case R.id.R70:
-                clickedPosition.setX(7);
-                clickedPosition.setY(0);
+                click = Square.H1;
                 break;
 
             case R.id.R01:
-                clickedPosition.setX(0);
-                clickedPosition.setY(1);
+                click = Square.A2;
                 break;
             case R.id.R11:
-                clickedPosition.setX(1);
-                clickedPosition.setY(1);
+                click = Square.B2;
                 break;
             case R.id.R21:
-                clickedPosition.setX(2);
-                clickedPosition.setY(1);
+                click = Square.C2;
                 break;
             case R.id.R31:
-                clickedPosition.setX(3);
-                clickedPosition.setY(1);
+                click = Square.D2;
                 break;
             case R.id.R41:
-                clickedPosition.setX(4);
-                clickedPosition.setY(1);
+                click = Square.E2;
                 break;
             case R.id.R51:
-                clickedPosition.setX(5);
-                clickedPosition.setY(1);
+                click = Square.F2;
                 break;
             case R.id.R61:
-                clickedPosition.setX(6);
-                clickedPosition.setY(1);
+                click = Square.G2;
                 break;
             case R.id.R71:
-                clickedPosition.setX(7);
-                clickedPosition.setY(1);
+                click = Square.H2;
                 break;
 
             case R.id.R02:
-                clickedPosition.setX(0);
-                clickedPosition.setY(2);
+                click = Square.A3;
                 break;
             case R.id.R12:
-                clickedPosition.setX(1);
-                clickedPosition.setY(2);
+                click = Square.B3;
                 break;
             case R.id.R22:
-                clickedPosition.setX(2);
-                clickedPosition.setY(2);
+                click = Square.C3;
                 break;
             case R.id.R32:
-                clickedPosition.setX(3);
-                clickedPosition.setY(2);
+                click = Square.D3;
                 break;
             case R.id.R42:
-                clickedPosition.setX(4);
-                clickedPosition.setY(2);
+                click = Square.E3;
                 break;
             case R.id.R52:
-                clickedPosition.setX(5);
-                clickedPosition.setY(2);
+                click = Square.F3;
                 break;
             case R.id.R62:
-                clickedPosition.setX(6);
-                clickedPosition.setY(2);
+                click = Square.G3;
                 break;
             case R.id.R72:
-                clickedPosition.setX(7);
-                clickedPosition.setY(2);
+                click = Square.H3;
                 break;
 
             case R.id.R03:
-                clickedPosition.setX(0);
-                clickedPosition.setY(3);
+                click = Square.A4;
                 break;
             case R.id.R13:
-                clickedPosition.setX(1);
-                clickedPosition.setY(3);
+                click = Square.B4;
                 break;
             case R.id.R23:
-                clickedPosition.setX(2);
-                clickedPosition.setY(3);
+                click = Square.C4;
                 break;
             case R.id.R33:
-                clickedPosition.setX(3);
-                clickedPosition.setY(3);
+                click = Square.D4;
                 break;
             case R.id.R43:
-                clickedPosition.setX(4);
-                clickedPosition.setY(3);
+                click = Square.E4;
                 break;
             case R.id.R53:
-                clickedPosition.setX(5);
-                clickedPosition.setY(3);
+                click = Square.F4;
                 break;
             case R.id.R63:
-                clickedPosition.setX(6);
-                clickedPosition.setY(3);
+                click = Square.G4;
                 break;
             case R.id.R73:
-                clickedPosition.setX(7);
-                clickedPosition.setY(3);
+                click = Square.H4;
                 break;
 
             case R.id.R04:
-                clickedPosition.setX(0);
-                clickedPosition.setY(4);
+                click = Square.A5;
                 break;
             case R.id.R14:
-                clickedPosition.setX(1);
-                clickedPosition.setY(4);
+                click = Square.B5;
                 break;
             case R.id.R24:
-                clickedPosition.setX(2);
-                clickedPosition.setY(4);
+                click = Square.C5;
                 break;
             case R.id.R34:
-                clickedPosition.setX(3);
-                clickedPosition.setY(4);
+                click = Square.D5;
                 break;
             case R.id.R44:
-                clickedPosition.setX(4);
-                clickedPosition.setY(4);
+                click = Square.E5;
                 break;
             case R.id.R54:
-                clickedPosition.setX(5);
-                clickedPosition.setY(4);
+                click = Square.F5;
                 break;
             case R.id.R64:
-                clickedPosition.setX(6);
-                clickedPosition.setY(4);
+                click = Square.G5;
                 break;
             case R.id.R74:
-                clickedPosition.setX(7);
-                clickedPosition.setY(4);
+                click = Square.H5;
                 break;
 
             case R.id.R05:
-                clickedPosition.setX(0);
-                clickedPosition.setY(5);
+                click = Square.A6;
                 break;
             case R.id.R15:
-                clickedPosition.setX(1);
-                clickedPosition.setY(5);
+                click = Square.B6;
                 break;
             case R.id.R25:
-                clickedPosition.setX(2);
-                clickedPosition.setY(5);
+                click = Square.C6;
                 break;
             case R.id.R35:
-                clickedPosition.setX(3);
-                clickedPosition.setY(5);
+                click = Square.D6;
                 break;
             case R.id.R45:
-                clickedPosition.setX(4);
-                clickedPosition.setY(5);
+                click = Square.E6;
                 break;
             case R.id.R55:
-                clickedPosition.setX(5);
-                clickedPosition.setY(5);
+                click = Square.F6;
                 break;
             case R.id.R65:
-                clickedPosition.setX(6);
-                clickedPosition.setY(5);
+                click = Square.G6;
                 break;
             case R.id.R75:
-                clickedPosition.setX(7);
-                clickedPosition.setY(5);
+                click = Square.H6;
                 break;
 
             case R.id.R06:
-                clickedPosition.setX(0);
-                clickedPosition.setY(6);
+                click = Square.A7;
                 break;
             case R.id.R16:
-                clickedPosition.setX(1);
-                clickedPosition.setY(6);
+                click = Square.B7;
                 break;
             case R.id.R26:
-                clickedPosition.setX(2);
-                clickedPosition.setY(6);
+                click = Square.C7;
                 break;
             case R.id.R36:
-                clickedPosition.setX(3);
-                clickedPosition.setY(6);
+                click = Square.D7;
                 break;
             case R.id.R46:
-                clickedPosition.setX(4);
-                clickedPosition.setY(6);
+                click = Square.E7;
                 break;
             case R.id.R56:
-                clickedPosition.setX(5);
-                clickedPosition.setY(6);
+                click = Square.F7;
                 break;
             case R.id.R66:
-                clickedPosition.setX(6);
-                clickedPosition.setY(6);
+                click = Square.G7;
                 break;
             case R.id.R76:
-                clickedPosition.setX(7);
-                clickedPosition.setY(6);
+                click = Square.H7;
                 break;
 
             case R.id.R07:
-                clickedPosition.setX(0);
-                clickedPosition.setY(7);
+                click = Square.A8;
                 break;
             case R.id.R17:
-                clickedPosition.setX(1);
-                clickedPosition.setY(7);
+                click = Square.B8;
                 break;
             case R.id.R27:
-                clickedPosition.setX(2);
-                clickedPosition.setY(7);
+                click = Square.C8;
                 break;
             case R.id.R37:
-                clickedPosition.setX(3);
-                clickedPosition.setY(7);
+                click = Square.D8;
                 break;
             case R.id.R47:
-                clickedPosition.setX(4);
-                clickedPosition.setY(7);
+                click = Square.E8;
                 break;
             case R.id.R57:
-                clickedPosition.setX(5);
-                clickedPosition.setY(7);
-                break;
+                click = Square.F8;
             case R.id.R67:
-                clickedPosition.setX(6);
-                clickedPosition.setY(7);
+                click = Square.G8;
                 break;
             case R.id.R77:
-                clickedPosition.setX(7);
-                clickedPosition.setY(7);
+                click = Square.H8;
                 break;
         }
 
-        if (!AnythingSelected) {
-            if(Board[clickedPosition.getX()][clickedPosition.getY()].getPiece() == null) {
-                isKingInDanger();
-                return;
-            }else{
-                if(Board[clickedPosition.getX()][clickedPosition.getY()].getPiece().isWhite() != FirstPlayerTurn){
-                    isKingInDanger();
-                    return;
-                }else{
-                    listOfCoordinates.clear();
-                    listOfCoordinates = Board[clickedPosition.getX()][clickedPosition.getY()].getPiece().AllowedMoves(clickedPosition, Board);
-                    DisplayBoardBackground[clickedPosition.getX()][clickedPosition.getY()].setBackgroundResource(R.color.colorSelected);
-                    setColorAtAllowedPosition(listOfCoordinates);
-                    AnythingSelected = true;
-                }
-            }
+        ArrayList<Move> allowMoves = new ArrayList<>();
+        if (c1==null) {
+            c1=click;
+            colorMove(c1);
+
         } else {
-            if(Board[clickedPosition.getX()][clickedPosition.getY()].getPiece() == null){
-                if(moveIsAllowed(listOfCoordinates , clickedPosition)){
-
-                    saveBoard();
-                    if(Board[clickedPosition.getX()][clickedPosition.getY()].getPiece() instanceof King){
-                        if(Board[clickedPosition.getX()][clickedPosition.getY()].getPiece().isWhite() != FirstPlayerTurn){
-                            game_over.setVisibility(View.VISIBLE);
+            if (c1!=null && c2==null) {
+                c2=click;
+                Move mo=new Move(c1,c2);
+                if(isaMove(mo)){
+                    if(board.getPiece(mo.getFrom())== Piece.WHITE_PAWN && (mo.getTo()==Square.A8 || mo.getTo()==Square.B8 || mo.getTo()==Square.C8 || mo.getTo()==Square.D8 || mo.getTo()==Square.E8 || mo.getTo()==Square.F8 || mo.getTo()==Square.G8 || mo.getTo()==Square.H8)){
+                        pawn_choices.setVisibility(View.VISIBLE);
+                        return;
+                    }else {
+                        if(board.getPiece(mo.getFrom())== Piece.BLACK_PAWN && (mo.getTo()==Square.A1 || mo.getTo()==Square.B1 || mo.getTo()==Square.C1 || mo.getTo()==Square.D1 || mo.getTo()==Square.E1 || mo.getTo()==Square.F1 || mo.getTo()==Square.G1 || mo.getTo()==Square.H1)){
+                            pawn_choices.setVisibility(View.VISIBLE);
+                            return;
                         }
                     }
-                    Board[clickedPosition.getX()][clickedPosition.getY()].setPiece(Board[lastPos.getX()][lastPos.getY()].getPiece());
-                    Board[lastPos.getX()][lastPos.getY()].setPiece(null);
-
-                    isKingInDanger();
-                    resetColorAtAllowedPosition(listOfCoordinates);
-                    DisplayBoard[lastPos.getX()][lastPos.getY()].setBackgroundResource(0);
-                    resetColorAtLastPosition(lastPos);
-                    AnythingSelected = false;
-                    FirstPlayerTurn = !FirstPlayerTurn;
-                    checkForPawn();
-
-                }else{
-                    resetColorAtLastPosition(lastPos);
-                    resetColorAtAllowedPosition(listOfCoordinates);
-                    AnythingSelected = false;
-                }
-
-            }else{
-                if(Board[clickedPosition.getX()][clickedPosition.getY()].getPiece() == null) {
-                    isKingInDanger();
-                    return;
-
-                }else{
-                    if(Board[clickedPosition.getX()][clickedPosition.getY()].getPiece() !=null){
-                        if(Board[clickedPosition.getX()][clickedPosition.getY()].getPiece().isWhite() != FirstPlayerTurn){
-                            if(moveIsAllowed(listOfCoordinates , clickedPosition)){
-
-                                saveBoard();
-                                if(Board[clickedPosition.getX()][clickedPosition.getY()].getPiece() instanceof King){
-                                    if(Board[clickedPosition.getX()][clickedPosition.getY()].getPiece().isWhite() != FirstPlayerTurn){
-                                        game_over.setVisibility(View.VISIBLE);
-                                    }
-                                }
-                                Board[clickedPosition.getX()][clickedPosition.getY()].setPiece(Board[lastPos.getX()][lastPos.getY()].getPiece());
-                                Board[lastPos.getX()][lastPos.getY()].setPiece(null);
-
-                                resetColorAtAllowedPosition(listOfCoordinates);
-                                DisplayBoard[lastPos.getX()][lastPos.getY()].setBackgroundResource(0);
-                                resetColorAtLastPosition(lastPos);
-
-                                AnythingSelected = false;
-                                FirstPlayerTurn = !FirstPlayerTurn;
-                                checkForPawn();
-                            }else{
-                                resetColorAtLastPosition(lastPos);
-                                resetColorAtAllowedPosition(listOfCoordinates);
-                                AnythingSelected = false;
-                            }
-
-                        }else{
-                            if(Board[clickedPosition.getX()][clickedPosition.getY()].getPiece().isWhite() != FirstPlayerTurn){
-                                isKingInDanger();
-                                return;
-                            }
-
-                            resetColorAtLastPosition(lastPos);
-                            resetColorAtAllowedPosition(listOfCoordinates);
-
-                            listOfCoordinates.clear();
-                            listOfCoordinates = Board[clickedPosition.getX()][clickedPosition.getY()].getPiece().AllowedMoves(clickedPosition, Board);
-                            DisplayBoardBackground[clickedPosition.getX()][clickedPosition.getY()].setBackgroundResource(R.color.colorSelected);
-                            setColorAtAllowedPosition(listOfCoordinates);
-                            AnythingSelected = true;
-                        }
-                    }
+                    board.doMove(mo);
+                    clearBoardColor();
+                    moveBoard(parseBoard());
+                    System.out.println(board.toString());
+                    clearDuble();
+                }else {
+                        clearBoardColor();
+                        c1=c2;
+                        c2=null;
+                        c1=click;
+                        colorMove(c1);
                 }
             }
         }
 
-        isKingInDanger();
-        lastPos = new Coordinates(clickedPosition.getX(), clickedPosition.getY());
-        setBoard();
+        if (board.isKingAttacked()){
+            colorRedking(parseBoard());
+        }
+        if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
+            System.out.println("scacco matto or Draw or stallo");
+            game_over.setVisibility(View.VISIBLE);
+            /*
+            Dato che poi per le ripetizioni trova altre mosse meglio cambiare pagina
+             */
+        }
+
+
     }
 
-    public void saveBoard(){
-        numberOfMoves++;
-        LastMoves.add(numberOfMoves-1 ,Board2 );
-
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                LastMoves.get(numberOfMoves-1)[i][j] = new Position(null);
-            }
-        }
-
-        for(int g=0;g<8;g++){
-            for(int h=0;h<8;h++){
-                if(Board[g][h].getPiece()==null){
-                    LastMoves.get(numberOfMoves-1)[g][h].setPiece(null);
-                }else{
-                    LastMoves.get(numberOfMoves-1)[g][h].setPiece(Board[g][h].getPiece());
-                }
-            }
-        }
-    }
-
-    public void undo(View v){
-        if(numberOfMoves>0) {
-
-            for(int g=0;g<8;g++){
-                for(int h=0;h<8;h++){
-                    if(LastMoves.get(numberOfMoves-1)[g][h].getPiece()==null){
-                        Board[g][h].setPiece(null);
-                    }else{
-                        Board[g][h].setPiece(LastMoves.get(numberOfMoves-1)[g][h].getPiece());
-                    }
-                }
-            }
-            numberOfMoves--;
-
-            setBoard();
-            for(int i=0;i<8;i++){
-                for(int j=0;j<8;j++){
-                    if((i+j)%2==0){
-                        DisplayBoardBackground[i][j].setBackgroundResource(R.color.colorBoardDark);
-                    }else{
-                        DisplayBoardBackground[i][j].setBackgroundResource(R.color.colorBoardLight);
-                    }
-                }
-            }
-            isKingInDanger();
-            FirstPlayerTurn = !FirstPlayerTurn;
-            game_over.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    public void pawnChoice(View v){
-        int x = v.getId();
-        switch (x){
-            case R.id.pawn_queen :
-                if(clickedPosition.getY() == 0){
-                    Board[clickedPosition.getX()][clickedPosition.getY()].setPiece(new Queen(true));
-                    DisplayBoard[clickedPosition.getX()][clickedPosition.getY()].setBackgroundResource(R.drawable.wqueen);
-                }else{
-                    Board[clickedPosition.getX()][clickedPosition.getY()].setPiece(new Queen(false));
-                    DisplayBoard[clickedPosition.getX()][clickedPosition.getY()].setBackgroundResource(R.drawable.bqueen);
-                }
-                break;
-            case R.id.pawn_rook :
-                if(clickedPosition.getY() == 0){
-                    Board[clickedPosition.getX()][clickedPosition.getY()].setPiece(new Rook(true));
-                    DisplayBoard[clickedPosition.getX()][clickedPosition.getY()].setBackgroundResource(R.drawable.wrook);
-                }else{
-                    Board[clickedPosition.getX()][clickedPosition.getY()].setPiece(new Rook(false));
-                    DisplayBoard[clickedPosition.getX()][clickedPosition.getY()].setBackgroundResource(R.drawable.brook);
-                }
-                break;
-            case R.id.pawn_bishop :
-                if(clickedPosition.getY() == 0){
-                    Board[clickedPosition.getX()][clickedPosition.getY()].setPiece(new Bishop(true));
-                    DisplayBoard[clickedPosition.getX()][clickedPosition.getY()].setBackgroundResource(R.drawable.wbishop);
-                }else{
-                    Board[clickedPosition.getX()][clickedPosition.getY()].setPiece(new Bishop(false));
-                    DisplayBoard[clickedPosition.getX()][clickedPosition.getY()].setBackgroundResource(R.drawable.bbishop);
-                }
-                break;
-            case R.id.pawn_knight :
-                if(clickedPosition.getY() == 0){
-                    Board[clickedPosition.getX()][clickedPosition.getY()].setPiece(new Knight(true));
-                    DisplayBoard[clickedPosition.getX()][clickedPosition.getY()].setBackgroundResource(R.drawable.wknight);
-                }else{
-                    Board[clickedPosition.getX()][clickedPosition.getY()].setPiece(new Knight(false));
-                    DisplayBoard[clickedPosition.getX()][clickedPosition.getY()].setBackgroundResource(R.drawable.bknight);
-
-                }
-                break;
-        }
+    public void pawnChoice (View view){
         pawn_choices.setVisibility(View.INVISIBLE);
-    }
-
-    private void resetColorAtAllowedPosition(ArrayList<Coordinates> listOfCoordinates) {
-        for(int i=0; i<listOfCoordinates.size(); i++){
-            if((listOfCoordinates.get(i).getX() + listOfCoordinates.get(i).getY())%2==0){
-                DisplayBoardBackground[listOfCoordinates.get(i).getX()][listOfCoordinates.get(i).getY()].setBackgroundResource(R.color.colorBoardDark);
-            }else {
-                DisplayBoardBackground[listOfCoordinates.get(i).getX()][listOfCoordinates.get(i).getY()].setBackgroundResource(R.color.colorBoardLight);
-            }
+        TextView t= (TextView) view;
+        switch (t.getText().toString()){
+            case "Queen":   lastChoice = (board.getSideToMove().equals(Side.WHITE)) ?  Piece.WHITE_QUEEN :  Piece.BLACK_QUEEN;
+                            break;
+            case "Bishop":   lastChoice = (board.getSideToMove().equals(Side.WHITE)) ?  Piece.WHITE_BISHOP :  Piece.BLACK_BISHOP;
+                            break;
+            case "Rock":   lastChoice = (board.getSideToMove().equals(Side.WHITE)) ?  Piece.WHITE_ROOK:  Piece.BLACK_ROOK;
+                            break;
+            case "Knight":   lastChoice = (board.getSideToMove().equals(Side.WHITE)) ?  Piece.WHITE_KNIGHT :  Piece.BLACK_KNIGHT;
+                            break;
         }
+        board.doMove(new Move(c1,c2,lastChoice));
+        clearBoardColor();
+        moveBoard(parseBoard());
+        System.out.println(board.toString());
+        clearDuble();
     }
 
-    void setColorAtAllowedPosition(ArrayList<Coordinates> list){
 
-        for(int i=0; i<list.size(); i++){
-            if(Board[list.get(i).getX()][list.get(i).getY()].getPiece() == null){
-                DisplayBoardBackground[list.get(i).getX()][list.get(i).getY()].setBackgroundResource(R.color.colorPositionAvailable);
-            }else{
-                DisplayBoardBackground[list.get(i).getX()][list.get(i).getY()].setBackgroundResource(R.color.colorDanger);
-            }
+    private boolean isaMove(Move mo) {
+        for (Move m : board.legalMoves()) {
+           System.out.println(m.toString());
         }
-    }
-
-    private boolean moveIsAllowed(ArrayList<Coordinates> piece, Coordinates coordinate) {
-        Boolean Allowed = false;
-        for(int i =0;i<piece.size();i++){
-            if(piece.get(i).getX() == coordinate.getX()  &&  piece.get(i).getY() == coordinate.getY()){
-                Allowed = true;
-                break;
-            }
+        for (Move m : board.legalMoves()) {
+            if (m.equals(mo) || m.toString().contains(mo.toString()))
+                return true;
         }
-        return Allowed;
+        return false;
     }
 
-    private void resetColorAtLastPosition(Coordinates lastPos){
-        if((lastPos.getX() + lastPos.getY())%2==0){
-            DisplayBoardBackground[lastPos.getX()][lastPos.getY()].setBackgroundResource(R.color.colorBoardDark);
-        }else {
-            DisplayBoardBackground[lastPos.getX()][lastPos.getY()].setBackgroundResource(R.color.colorBoardLight);
-        }
-    }
 
-    private void isKingInDanger(){
-        ArrayList<Coordinates> List = new ArrayList<>();
+    /**
+     * This function parse the board and create a matrix that return
+     * @return return a matrix represented the board
+     */
+    private String [][] parseBoard(){
+        String str=board.toString();
 
-        for(int i=0;i<8;i++){
-            for(int j=0;j<8;j++){
-                if(Board[i][j].getPiece() != null){
-                    List.clear();
-                    Coordinates c = new Coordinates(i,j);
-                    List = Board[i][j].getPiece().AllowedMoves(c,Board);
-
-                    for (int x=0;x<List.size();x++){
-                        if(Board[List.get(x).getX()][List.get(x).getY()].getPiece() instanceof King){
-
-                            if((List.get(x).getX()+List.get(x).getY())%2==0){
-                                DisplayBoardBackground[List.get(x).getX()][List.get(x).getY()].setBackgroundResource(R.color.colorBoardDark);
-                            }else{
-                                DisplayBoardBackground[List.get(x).getX()][List.get(x).getY()].setBackgroundResource(R.color.colorBoardLight);
-                            }
-
-                            if(Board[i][j].getPiece().isWhite() != Board[List.get(x).getX()][List.get(x).getY()].getPiece().isWhite()){
-                                DisplayBoardBackground[List.get(x).getX()][List.get(x).getY()].setBackgroundResource(R.color.colorKingInDanger);
-                            }
-                        }
+        String[] array = str.split("", -1);
+        ArrayList<String> pos= new ArrayList<>();
+        boolean cont=true;
+        for(int i=0; i<array.length;i++){
+            if(cont){
+                if (array[i].equals("S")){
+                    cont=false;
+                }else{
+                    if (!array[i].equals("\n")){
+                        pos.add(array[i]);
                     }
                 }
             }
         }
+
+        List<String> r1=  pos.subList(1,9);
+        List<String> r2=  pos.subList(9,17);
+        List<String> r3=  pos.subList(17,25);
+        List<String> r4=  pos.subList(25,33);
+        List<String> r5=  pos.subList(33,41);
+        List<String> r6=  pos.subList(41,49);
+        List<String> r7=  pos.subList(49,57);
+        List<String> r8=  pos.subList(57,65);
+
+
+        String [][] matrix=new String[8][8];
+
+        matrix [0]= r8.toArray(new String[0]);
+        matrix [1]= r7.toArray(new String[0]);
+        matrix [2]= r6.toArray(new String[0]);
+        matrix [3]= r5.toArray(new String[0]);
+        matrix [4]= r4.toArray(new String[0]);
+        matrix [5]= r3.toArray(new String[0]);
+        matrix [6]= r2.toArray(new String[0]);
+        matrix [7]= r1.toArray(new String[0]);
+
+        return matrix;
     }
 
-    private void checkForPawn(){
-        if(Board[clickedPosition.getX()][clickedPosition.getY()].getPiece() instanceof Pawn){
-            if(Board[clickedPosition.getX()][clickedPosition.getY()].getPiece().isWhite()){
-                if(clickedPosition.getY() == 0){
-                    pawn_choices.setVisibility(View.VISIBLE);
-                }
-            }else{
-                if(clickedPosition.getY() == 7){
-                    pawn_choices.setVisibility(View.VISIBLE);
-                    pawn_choices.setRotation(180);
+    /**
+     *
+     *
+     * Remark: Java is Row first, but the display JAVA è ROW FIRST MA IL DISPLAY BOARD E TUTTA L'ACTIVITY è STATA INIZIALIZZATA AL CONTRARIO
+     */
+    private void moveBoard(String[][] matrix){
+        for (int row=0;row<8;row++){
+            for (int col=0; col<8; col++){
+                switch (matrix[row][col]){
+                    case "r":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.brook);
+                        break;
+                    case "n":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.bknight);
+                        break;
+                    case "b":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.bbishop);
+                        break;
+                    case "q":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.bqueen);
+                        break;
+                    case "k":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.bking);
+                        break;
+                    case "p":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.bpawn);
+                        break;
+                    case "R":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.wrook);
+                        break;
+                    case "N":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.wknight);
+                        break;
+                    case "B":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.wbishop);
+                        break;
+                    case "Q":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.wqueen);
+                        break;
+                    case "K":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.wking);
+                        break;
+                    case "P":
+                        DisplayBoard[col][row].setBackgroundResource(R.drawable.wpawn);
+                        break;
+                    case ".":
+                        DisplayBoard[col][row].setBackgroundResource(0);
+                        break;
+
                 }
             }
         }
-        isKingInDanger();
     }
+
+    /**
+     * @param pos Final square of the moves
+     * @return List of coordinates
+     */
+    private Integer parseYAssis (int pos){
+
+        HashMap<Integer, Integer> Y = new HashMap<Integer, Integer>() {{
+            put(0,7);
+            put(1,6);
+            put(2,5);
+            put(3,4);
+            put(4,3);
+            put(5,2);
+            put(6,1);
+            put(7,0);
+        }};
+
+       return Y.get(pos);
+    }
+
+
+
+
+
+    /**
+     * Clear all color of a boards
+     */
+    @SuppressLint("ResourceAsColor")
+    private void clearBoardColor(){
+        List<TextView> dark= new LinkedList<TextView>(){{
+           add((TextView) findViewById(R.id.RO000));
+           add((TextView) findViewById(R.id.RO002));
+           add((TextView) findViewById(R.id.RO004));
+           add((TextView) findViewById(R.id.RO006));
+
+           add((TextView) findViewById(R.id.RO017));
+           add((TextView) findViewById(R.id.RO015));
+           add((TextView) findViewById(R.id.RO013));
+           add((TextView) findViewById(R.id.RO011));
+
+           add((TextView) findViewById(R.id.RO020));
+           add((TextView) findViewById(R.id.RO022));
+           add((TextView) findViewById(R.id.RO024));
+           add((TextView) findViewById(R.id.RO026));
+
+            add((TextView) findViewById(R.id.RO037));
+            add((TextView) findViewById(R.id.RO035));
+            add((TextView) findViewById(R.id.RO033));
+            add((TextView) findViewById(R.id.RO031));
+
+            add((TextView) findViewById(R.id.RO040));
+            add((TextView) findViewById(R.id.RO042));
+            add((TextView) findViewById(R.id.RO044));
+            add((TextView) findViewById(R.id.RO046));
+
+            add((TextView) findViewById(R.id.RO057));
+            add((TextView) findViewById(R.id.RO055));
+            add((TextView) findViewById(R.id.RO053));
+            add((TextView) findViewById(R.id.RO051));
+
+            add((TextView) findViewById(R.id.RO060));
+            add((TextView) findViewById(R.id.RO062));
+            add((TextView) findViewById(R.id.RO064));
+            add((TextView) findViewById(R.id.RO066));
+
+            add((TextView) findViewById(R.id.RO077));
+            add((TextView) findViewById(R.id.RO075));
+            add((TextView) findViewById(R.id.RO073));
+            add((TextView) findViewById(R.id.RO071));
+        }};
+
+
+        for (TextView[] d : DisplayBoardBackgroundSelected){
+            for(TextView t:d){
+                if(dark.contains(t)){
+                    t.setBackgroundColor(Color.parseColor("#0586c8"));
+                }else {
+                    t.setBackgroundColor(Color.parseColor("#ffffff"));
+                }
+            }
+        }
+
+
+    }
+
+
+
+    /**
+     * Reset clicks
+     */
+    public void clearDuble(){
+        c1=null;
+        c2=null;
+    }
+
+
+    /**
+     *This function color the squares in which it is possible to move
+     * @param s Init moves square
+     */
+    @SuppressLint({"ResourceAsColor", "Range"})
+    private void colorMove (Square s) {
+        for (Move m : board.legalMoves()) {
+            if (m.getFrom() == s) {
+                DisplayBoardBackgroundSelected[parseMove(m.getTo()).get(0)][parseMove(m.getTo()).get(1)].setBackgroundColor(Color.parseColor("#A67FFFD4"));
+
+            }
+        }
+    }
+
+    /**
+     * This function color the king position if is under attak
+     */
+    private void colorRedking(String[][] matrix){
+
+        String king;
+        if (board.getSideToMove()== Side.WHITE){
+            king="K";
+        }else {
+            king="k";
+        }
+
+        for (int row=0;row<8;row++){
+            for (int col=0; col<8; col++){
+                if (matrix[row][col].equals(king))
+                    DisplayBoardBackgroundSelected[col][row].setBackgroundColor(Color.parseColor("#A6fc0703"));
+            }
+        }
+    }
+
+    /**
+     * @param pos Final square of the moves
+     * @return List of coordinates
+     */
+    private List<Integer> parseMove (Square pos){
+
+        HashMap<String, Integer> X = new HashMap<String, Integer>() {{
+            put("A", 0);
+            put("B", 1);
+            put("C", 2);
+            put("D", 3);
+            put("E", 4);
+            put("F", 5);
+            put("G", 6);
+            put("H", 7);
+        }};
+
+        HashMap<String, Integer> Y = new HashMap<String, Integer>() {{
+            put("1", 0);
+            put("2", 1);
+            put("3", 2);
+            put("4", 3);
+            put("5", 4);
+            put("6", 5);
+            put("7", 6);
+            put("8", 7);
+        }};
+
+        String posS = (String) pos.name();
+        String col = posS.substring(0, 1);
+        String row = posS.substring(1, 2);
+
+        LinkedList<Integer> ret = new LinkedList<>();
+        ret.add(X.get(col));
+        ret.add(Y.get(row));
+        return ret;
+    }
+
+
+
+
 }

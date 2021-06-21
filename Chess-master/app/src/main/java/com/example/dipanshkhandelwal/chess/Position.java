@@ -6,7 +6,7 @@ import com.example.dipanshkhandelwal.chess.Pieces.Piece;
  * Created by DIPANSH KHANDELWAL on 03-06-2017
  */
 
-public class  Position {
+public class Position {
     private Piece piece;
 
 
