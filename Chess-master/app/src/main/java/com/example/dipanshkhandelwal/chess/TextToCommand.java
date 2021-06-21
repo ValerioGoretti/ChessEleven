@@ -46,7 +46,7 @@ public class TextToCommand {
             if(setSentence.contains(cell)){result+=cell+" ";cellsNumber+=1;}
         if(cellsNumber==2){break;}
         }
-        if( result.equals("")) return "I didn't understand the move";
+        if( result.equals("")||cellsNumber<2) return "I didn't understand the move";
         else{
             return result;
         }
