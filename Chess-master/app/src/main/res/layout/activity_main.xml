@@ -1428,7 +1428,6 @@
             android:id="@+id/R07"
             android:layout_width="43dp"
             android:layout_height="43dp"
-
             android:clickable="true"
             android:elevation="1dp"
             android:longClickable="false"
@@ -1514,7 +1513,6 @@
             android:id="@+id/R16"
             android:layout_width="43dp"
             android:layout_height="43dp"
-
             android:clickable="true"
             android:elevation="1dp"
             android:longClickable="false"
@@ -2084,7 +2082,7 @@
             android:textSize="40sp" />
 
         <TextView
-            android:id="@+id/pawn_rook"
+            android:id="@+id/pawn_rock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5sp"

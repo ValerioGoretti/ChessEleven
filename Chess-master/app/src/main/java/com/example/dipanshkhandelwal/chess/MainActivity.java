@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RecognitionListener {
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextToCommand textToCommand=new TextToCommand();
     private int currentTask=0;
     private int currentStep=0;
+    private Move proposedMove;
     private void resetSpeechRecognizer() {
         if(speech != null)
             speech.destroy();
@@ -199,8 +201,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         //if(returnedText.getText().equals("What move do you want to do?")){currentTask=1;currentStep=1;}
                         String mossa=textToCommand.getMove(text.toLowerCase());
                         if (!mossa.equals("I didn't understand the move")){
-                            //Move funzionaValerio(mossa)
-                            //
+
+                            Move m=searchMove(mossa);
+                            if (m==null) System.out.println("Uncorrect move! Try again");
+                            else{System.out.println("Correct Move! "+m.toString());
+                                System.out.println("Piece moved  " + board.getPiece(m.getFrom()));
+                                proposedMove=m;
+                            }
                             returnedText.setText("Do you confirm the move: "+mossa+"?");currentTask=1;currentStep=2;}
 
 
@@ -212,6 +219,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             else{
                 if(text.toLowerCase().equals("indietro")){returnedText.setText(" ");currentTask=0;}
+                if(currentTask==10){
+
+                       String promozione=text.toLowerCase();
+                       View v=null;
+                       switch (promozione){
+                           case "regina":  v = findViewById(getResources().getIdentifier("pawn_queen","id", getBaseContext().getPackageName()));
+                                         break;
+                           case "torre":  v = findViewById(getResources().getIdentifier("pawn_rock","id", getBaseContext().getPackageName()));
+                                          break;
+                           case "cavallo":  v =findViewById(getResources().getIdentifier("pawn_knight","id", getBaseContext().getPackageName()));
+                                         break;
+                           case "alfiere":  v =findViewById(getResources().getIdentifier("pawn_bishop","id", getBaseContext().getPackageName()));
+                                        break;
+
+                       }
+                       if (v==null) {returnedText.setText("Plese chose among 'regina','cavallo','alfiere' or 'torre' "); }
+                       else{returnedText.setText("Done!");currentTask=0;currentStep=0;pawnChoice(v);}
+                }
                 if (currentTask==1){
                     //if (currentStep==1){
                     //  String mossa=textToCommand.getMove(text.toLowerCase());
@@ -224,6 +249,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             currentStep=0;
                             System.out.println("Task 1. ");
                             returnedText.setText("Done!");
+                            //board.doMove(proposedMove);
+                            List<Integer> coordinate_from=parseMove(proposedMove.getFrom());
+                            String coordinate_f="R"+coordinate_from.get(0) +""+coordinate_from.get(1);
+                            View from=findViewById(getResources().getIdentifier(coordinate_f,"id", getBaseContext().getPackageName()));
+                            onClick(from);
+
+
+                            List<Integer> coordinate_to=parseMove(proposedMove.getTo());
+                            String coordinate_t="R"+coordinate_to.get(0) +""+coordinate_to.get(1);
+                            View to=findViewById(getResources().getIdentifier(coordinate_t,"id", getBaseContext().getPackageName()));
+                            onClick(to);
                         }
                         if(text.toLowerCase().equals("no")){
                             currentStep=0;
@@ -772,11 +808,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Move mo=new Move(c1,c2);
                 if(isaMove(mo)){
                     if(board.getPiece(mo.getFrom())== Piece.WHITE_PAWN && (mo.getTo()==Square.A8 || mo.getTo()==Square.B8 || mo.getTo()==Square.C8 || mo.getTo()==Square.D8 || mo.getTo()==Square.E8 || mo.getTo()==Square.F8 || mo.getTo()==Square.G8 || mo.getTo()==Square.H8)){
+                        currentTask=10;
                         pawn_choices.setVisibility(View.VISIBLE);
                         return;
                     }else {
                         if(board.getPiece(mo.getFrom())== Piece.BLACK_PAWN && (mo.getTo()==Square.A1 || mo.getTo()==Square.B1 || mo.getTo()==Square.C1 || mo.getTo()==Square.D1 || mo.getTo()==Square.E1 || mo.getTo()==Square.F1 || mo.getTo()==Square.G1 || mo.getTo()==Square.H1)){
                             pawn_choices.setVisibility(View.VISIBLE);
+                            currentTask=10;
                             return;
                         }
                     }
@@ -839,6 +877,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return false;
     }
 
+
+    private  Move searchMove(String mosse) {
+        mosse= mosse.toUpperCase(Locale.ROOT);
+        String[] pos=mosse.split(" ");
+        Square a=null;
+        Square b=null;
+        try {
+            a= Square.fromValue(pos[0]);
+            b= Square.fromValue(pos[1]);
+        }catch (IllegalArgumentException e){
+            return null;
+        }
+        for (Move m : board.legalMoves()) {
+            if ((m.getTo().equals(a) && m.getFrom().equals(b)) || (m.getTo().equals(b) && m.getFrom().equals(a)) )
+                return m;
+        }
+        return null;
+    }
 
     /**
      * This function parse the board and create a matrix that return
