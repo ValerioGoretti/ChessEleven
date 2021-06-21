@@ -33,7 +33,7 @@ public class FirstPage extends AppCompatActivity {
                 SecondLayout.setVisibility(View.VISIBLE);
                 FirstLayout.setVisibility(View.INVISIBLE);
             }
-        },5000);
+        },0);
 
         Button StartGame = (Button) findViewById(R.id.button);
 
