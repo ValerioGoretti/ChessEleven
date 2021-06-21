@@ -12,7 +12,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/wall"
+        app:srcCompat="@drawable/background_game"
         android:id="@+id/imageView2"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -676,6 +676,662 @@
             android:onClick="onClick" />
     </GridLayout>
 
+    <!-- Scacchiera per Selezione background (inferiore)-->
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:rowCount="8"
+        android:columnCount="8"
+        android:id="@+id/gridLayoutSel"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/RO007"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick"
+            />
+
+        <TextView
+            android:id="@+id/RO017"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO027"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO037"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO047"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO057"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO067"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO077"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO006"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO016"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO026"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO036"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO046"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO056"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO066"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO076"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO005"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO015"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO025"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO035"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO045"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO055"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO065"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO075"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO004"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO014"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO024"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO034"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO044"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO054"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO064"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO074"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO003"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO013"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO023"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO033"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO043"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO053"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO063"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO073"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO002"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO012"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO022"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO032"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO042"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO052"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO062"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO072"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO001"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO011"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO021"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO031"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO041"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO051"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO061"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO071"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO000"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick"
+            />
+
+        <TextView
+            android:id="@+id/RO010"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO020"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO030"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO040"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO050"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO060"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardDark"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+
+        <TextView
+            android:id="@+id/RO070"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:background="@color/colorBoardLight"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:longClickable="false"
+            android:onClick="onClick" />
+    </GridLayout>
+
+
     <!-- Scacchiera per i pezzi (superiore)-->
     <GridLayout
         android:id="@+id/gridLayout"
@@ -1300,16 +1956,7 @@
             android:onClick="onClick" />
     </GridLayout>
 
-    <Button
-        android:text="UNDO"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/undo_button"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="16dp"
-        android:onClick="undo" />
+
 
     <LinearLayout
         android:id="@+id/pawn_chioces"
@@ -1322,7 +1969,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="@+id/imageView2"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/pawn_queen"
@@ -1367,7 +2015,7 @@
             android:elevation="6dp"
             android:onClick="pawnChoice"
             android:padding="5sp"
-            android:text="Rook"
+            android:text="Rock"
             android:textAlignment="center"
             android:textColor="#23bc32"
             android:textSize="40sp" />
@@ -1402,6 +2050,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
+        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         android:textSize="60sp"
         android:textColor="@color/colorPrimaryDark" />

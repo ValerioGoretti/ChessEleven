@@ -9,16 +9,17 @@ import android.os.Bundle;
 import android.util.Pair;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.dipanshkhandelwal.chess.Pieces.Bishop;
 import com.example.dipanshkhandelwal.chess.Pieces.King;
 import com.example.dipanshkhandelwal.chess.Pieces.Knight;
 import com.example.dipanshkhandelwal.chess.Pieces.Pawn;
-import com.example.dipanshkhandelwal.chess.Pieces.Piece;
 import com.example.dipanshkhandelwal.chess.Pieces.Queen;
 import com.example.dipanshkhandelwal.chess.Pieces.Rook;
 import com.github.bhlangonijr.chesslib.Board;
+import com.github.bhlangonijr.chesslib.Piece;
 import com.github.bhlangonijr.chesslib.Side;
 import com.github.bhlangonijr.chesslib.Square;
 import com.github.bhlangonijr.chesslib.move.Move;
@@ -37,8 +38,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public TextView game_over;
     public TextView[][] DisplayBoard = new TextView[8][8];
     public TextView[][] DisplayBoardBackground = new TextView[8][8];
+    public TextView[][] DisplayBoardBackgroundSelected = new TextView[8][8];
     public LinearLayout pawn_choices;
     public Board board;
+    private Piece lastChoice=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,6 +235,80 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DisplayBoardBackground[6][7] = (TextView) findViewById(R.id.R067);
         DisplayBoardBackground[7][7] = (TextView) findViewById(R.id.R077);
 
+        /*
+        -----------------
+         */
+        DisplayBoardBackgroundSelected[0][0] = (TextView) findViewById(R.id.RO000);
+        DisplayBoardBackgroundSelected[1][0] = (TextView) findViewById(R.id.RO010);
+        DisplayBoardBackgroundSelected[2][0] = (TextView) findViewById(R.id.RO020);
+        DisplayBoardBackgroundSelected[3][0] = (TextView) findViewById(R.id.RO030);
+        DisplayBoardBackgroundSelected[4][0] = (TextView) findViewById(R.id.RO040);
+        DisplayBoardBackgroundSelected[5][0] = (TextView) findViewById(R.id.RO050);
+        DisplayBoardBackgroundSelected[6][0] = (TextView) findViewById(R.id.RO060);
+        DisplayBoardBackgroundSelected[7][0] = (TextView) findViewById(R.id.RO070);
+
+        DisplayBoardBackgroundSelected[0][1] = (TextView) findViewById(R.id.RO001);
+        DisplayBoardBackgroundSelected[1][1] = (TextView) findViewById(R.id.RO011);
+        DisplayBoardBackgroundSelected[2][1] = (TextView) findViewById(R.id.RO021);
+        DisplayBoardBackgroundSelected[3][1] = (TextView) findViewById(R.id.RO031);
+        DisplayBoardBackgroundSelected[4][1] = (TextView) findViewById(R.id.RO041);
+        DisplayBoardBackgroundSelected[5][1] = (TextView) findViewById(R.id.RO051);
+        DisplayBoardBackgroundSelected[6][1] = (TextView) findViewById(R.id.RO061);
+        DisplayBoardBackgroundSelected[7][1] = (TextView) findViewById(R.id.RO071);
+
+        DisplayBoardBackgroundSelected[0][2] = (TextView) findViewById(R.id.RO002);
+        DisplayBoardBackgroundSelected[1][2] = (TextView) findViewById(R.id.RO012);
+        DisplayBoardBackgroundSelected[2][2] = (TextView) findViewById(R.id.RO022);
+        DisplayBoardBackgroundSelected[3][2] = (TextView) findViewById(R.id.RO032);
+        DisplayBoardBackgroundSelected[4][2] = (TextView) findViewById(R.id.RO042);
+        DisplayBoardBackgroundSelected[5][2] = (TextView) findViewById(R.id.RO052);
+        DisplayBoardBackgroundSelected[6][2] = (TextView) findViewById(R.id.RO062);
+        DisplayBoardBackgroundSelected[7][2] = (TextView) findViewById(R.id.RO072);
+
+        DisplayBoardBackgroundSelected[0][3] = (TextView) findViewById(R.id.RO003);
+        DisplayBoardBackgroundSelected[1][3] = (TextView) findViewById(R.id.RO013);
+        DisplayBoardBackgroundSelected[2][3] = (TextView) findViewById(R.id.RO023);
+        DisplayBoardBackgroundSelected[3][3] = (TextView) findViewById(R.id.RO033);
+        DisplayBoardBackgroundSelected[4][3] = (TextView) findViewById(R.id.RO043);
+        DisplayBoardBackgroundSelected[5][3] = (TextView) findViewById(R.id.RO053);
+        DisplayBoardBackgroundSelected[6][3] = (TextView) findViewById(R.id.RO063);
+        DisplayBoardBackgroundSelected[7][3] = (TextView) findViewById(R.id.RO073);
+
+        DisplayBoardBackgroundSelected[0][4] = (TextView) findViewById(R.id.RO004);
+        DisplayBoardBackgroundSelected[1][4] = (TextView) findViewById(R.id.RO014);
+        DisplayBoardBackgroundSelected[2][4] = (TextView) findViewById(R.id.RO024);
+        DisplayBoardBackgroundSelected[3][4] = (TextView) findViewById(R.id.RO034);
+        DisplayBoardBackgroundSelected[4][4] = (TextView) findViewById(R.id.RO044);
+        DisplayBoardBackgroundSelected[5][4] = (TextView) findViewById(R.id.RO054);
+        DisplayBoardBackgroundSelected[6][4] = (TextView) findViewById(R.id.RO064);
+        DisplayBoardBackgroundSelected[7][4] = (TextView) findViewById(R.id.RO074);
+
+        DisplayBoardBackgroundSelected[0][5] = (TextView) findViewById(R.id.RO005);
+        DisplayBoardBackgroundSelected[1][5] = (TextView) findViewById(R.id.RO015);
+        DisplayBoardBackgroundSelected[2][5] = (TextView) findViewById(R.id.RO025);
+        DisplayBoardBackgroundSelected[3][5] = (TextView) findViewById(R.id.RO035);
+        DisplayBoardBackgroundSelected[4][5] = (TextView) findViewById(R.id.RO045);
+        DisplayBoardBackgroundSelected[5][5] = (TextView) findViewById(R.id.RO055);
+        DisplayBoardBackgroundSelected[6][5] = (TextView) findViewById(R.id.RO065);
+        DisplayBoardBackgroundSelected[7][5] = (TextView) findViewById(R.id.RO075);
+
+        DisplayBoardBackgroundSelected[0][6] = (TextView) findViewById(R.id.RO006);
+        DisplayBoardBackgroundSelected[1][6] = (TextView) findViewById(R.id.RO016);
+        DisplayBoardBackgroundSelected[2][6] = (TextView) findViewById(R.id.RO026);
+        DisplayBoardBackgroundSelected[3][6] = (TextView) findViewById(R.id.RO036);
+        DisplayBoardBackgroundSelected[4][6] = (TextView) findViewById(R.id.RO046);
+        DisplayBoardBackgroundSelected[5][6] = (TextView) findViewById(R.id.RO056);
+        DisplayBoardBackgroundSelected[6][6] = (TextView) findViewById(R.id.RO066);
+        DisplayBoardBackgroundSelected[7][6] = (TextView) findViewById(R.id.RO076);
+
+        DisplayBoardBackgroundSelected[0][7] = (TextView) findViewById(R.id.RO007);
+        DisplayBoardBackgroundSelected[1][7] = (TextView) findViewById(R.id.RO017);
+        DisplayBoardBackgroundSelected[2][7] = (TextView) findViewById(R.id.RO027);
+        DisplayBoardBackgroundSelected[3][7] = (TextView) findViewById(R.id.RO037);
+        DisplayBoardBackgroundSelected[4][7] = (TextView) findViewById(R.id.RO047);
+        DisplayBoardBackgroundSelected[5][7] = (TextView) findViewById(R.id.RO057);
+        DisplayBoardBackgroundSelected[6][7] = (TextView) findViewById(R.id.RO067);
+        DisplayBoardBackgroundSelected[7][7] = (TextView) findViewById(R.id.RO077);
 
     }
 
@@ -450,19 +527,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 c2=click;
                 Move mo=new Move(c1,c2);
                 if(isaMove(mo)){
+                    if(board.getPiece(mo.getFrom())== Piece.WHITE_PAWN && (mo.getTo()==Square.A8 || mo.getTo()==Square.B8 || mo.getTo()==Square.C8 || mo.getTo()==Square.D8 || mo.getTo()==Square.E8 || mo.getTo()==Square.F8 || mo.getTo()==Square.G8 || mo.getTo()==Square.H8)){
+                        pawn_choices.setVisibility(View.VISIBLE);
+                        return;
+                    }else {
+                        if(board.getPiece(mo.getFrom())== Piece.BLACK_PAWN && (mo.getTo()==Square.A1 || mo.getTo()==Square.B1 || mo.getTo()==Square.C1 || mo.getTo()==Square.D1 || mo.getTo()==Square.E1 || mo.getTo()==Square.F1 || mo.getTo()==Square.G1 || mo.getTo()==Square.H1)){
+                            pawn_choices.setVisibility(View.VISIBLE);
+                            return;
+                        }
+                    }
                     board.doMove(mo);
                     clearBoardColor();
                     moveBoard(parseBoard());
+                    System.out.println(board.toString());
                     clearDuble();
                 }else {
-                    clearBoardColor();
-                    c1=c2;
-                    c2=null;
-                    c1=click;
-                    colorMove(c1);
+                        clearBoardColor();
+                        c1=c2;
+                        c2=null;
+                        c1=click;
+                        colorMove(c1);
                 }
             }
         }
+
         if (board.isKingAttacked()){
             colorRedking(parseBoard());
         }
@@ -477,10 +565,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    public void pawnChoice (View view){
+        pawn_choices.setVisibility(View.INVISIBLE);
+        TextView t= (TextView) view;
+        switch (t.getText().toString()){
+            case "Queen":   lastChoice = (board.getSideToMove().equals(Side.WHITE)) ?  Piece.WHITE_QUEEN :  Piece.BLACK_QUEEN;
+                            break;
+            case "Bishop":   lastChoice = (board.getSideToMove().equals(Side.WHITE)) ?  Piece.WHITE_BISHOP :  Piece.BLACK_BISHOP;
+                            break;
+            case "Rock":   lastChoice = (board.getSideToMove().equals(Side.WHITE)) ?  Piece.WHITE_ROOK:  Piece.BLACK_ROOK;
+                            break;
+            case "Knight":   lastChoice = (board.getSideToMove().equals(Side.WHITE)) ?  Piece.WHITE_KNIGHT :  Piece.BLACK_KNIGHT;
+                            break;
+        }
+        board.doMove(new Move(c1,c2,lastChoice));
+        clearBoardColor();
+        moveBoard(parseBoard());
+        System.out.println(board.toString());
+        clearDuble();
+    }
+
 
     private boolean isaMove(Move mo) {
         for (Move m : board.legalMoves()) {
-            if (m.equals(mo))
+           System.out.println(m.toString());
+        }
+        for (Move m : board.legalMoves()) {
+            if (m.equals(mo) || m.toString().contains(mo.toString()))
                 return true;
         }
         return false;
@@ -617,54 +728,54 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @SuppressLint("ResourceAsColor")
     private void clearBoardColor(){
         List<TextView> dark= new LinkedList<TextView>(){{
-           add((TextView) findViewById(R.id.R000));
-           add((TextView) findViewById(R.id.R002));
-           add((TextView) findViewById(R.id.R004));
-           add((TextView) findViewById(R.id.R006));
+           add((TextView) findViewById(R.id.RO000));
+           add((TextView) findViewById(R.id.RO002));
+           add((TextView) findViewById(R.id.RO004));
+           add((TextView) findViewById(R.id.RO006));
 
-           add((TextView) findViewById(R.id.R017));
-           add((TextView) findViewById(R.id.R015));
-           add((TextView) findViewById(R.id.R013));
-           add((TextView) findViewById(R.id.R011));
+           add((TextView) findViewById(R.id.RO017));
+           add((TextView) findViewById(R.id.RO015));
+           add((TextView) findViewById(R.id.RO013));
+           add((TextView) findViewById(R.id.RO011));
 
-           add((TextView) findViewById(R.id.R020));
-           add((TextView) findViewById(R.id.R022));
-           add((TextView) findViewById(R.id.R024));
-           add((TextView) findViewById(R.id.R026));
+           add((TextView) findViewById(R.id.RO020));
+           add((TextView) findViewById(R.id.RO022));
+           add((TextView) findViewById(R.id.RO024));
+           add((TextView) findViewById(R.id.RO026));
 
-            add((TextView) findViewById(R.id.R037));
-            add((TextView) findViewById(R.id.R035));
-            add((TextView) findViewById(R.id.R033));
-            add((TextView) findViewById(R.id.R031));
+            add((TextView) findViewById(R.id.RO037));
+            add((TextView) findViewById(R.id.RO035));
+            add((TextView) findViewById(R.id.RO033));
+            add((TextView) findViewById(R.id.RO031));
 
-            add((TextView) findViewById(R.id.R040));
-            add((TextView) findViewById(R.id.R042));
-            add((TextView) findViewById(R.id.R044));
-            add((TextView) findViewById(R.id.R046));
+            add((TextView) findViewById(R.id.RO040));
+            add((TextView) findViewById(R.id.RO042));
+            add((TextView) findViewById(R.id.RO044));
+            add((TextView) findViewById(R.id.RO046));
 
-            add((TextView) findViewById(R.id.R057));
-            add((TextView) findViewById(R.id.R055));
-            add((TextView) findViewById(R.id.R053));
-            add((TextView) findViewById(R.id.R051));
+            add((TextView) findViewById(R.id.RO057));
+            add((TextView) findViewById(R.id.RO055));
+            add((TextView) findViewById(R.id.RO053));
+            add((TextView) findViewById(R.id.RO051));
 
-            add((TextView) findViewById(R.id.R060));
-            add((TextView) findViewById(R.id.R062));
-            add((TextView) findViewById(R.id.R064));
-            add((TextView) findViewById(R.id.R066));
+            add((TextView) findViewById(R.id.RO060));
+            add((TextView) findViewById(R.id.RO062));
+            add((TextView) findViewById(R.id.RO064));
+            add((TextView) findViewById(R.id.RO066));
 
-            add((TextView) findViewById(R.id.R077));
-            add((TextView) findViewById(R.id.R075));
-            add((TextView) findViewById(R.id.R073));
-            add((TextView) findViewById(R.id.R071));
+            add((TextView) findViewById(R.id.RO077));
+            add((TextView) findViewById(R.id.RO075));
+            add((TextView) findViewById(R.id.RO073));
+            add((TextView) findViewById(R.id.RO071));
         }};
 
 
-        for (TextView[] d : DisplayBoardBackground){
+        for (TextView[] d : DisplayBoardBackgroundSelected){
             for(TextView t:d){
                 if(dark.contains(t)){
-                    t.setBackgroundColor(Color.parseColor("#F0BA8C29"));
+                    t.setBackgroundColor(Color.parseColor("#0586c8"));
                 }else {
-                    t.setBackgroundColor(Color.parseColor("#F0F0D157"));
+                    t.setBackgroundColor(Color.parseColor("#ffffff"));
                 }
             }
         }
@@ -687,11 +798,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      *This function color the squares in which it is possible to move
      * @param s Init moves square
      */
-    @SuppressLint("ResourceAsColor")
+    @SuppressLint({"ResourceAsColor", "Range"})
     private void colorMove (Square s) {
         for (Move m : board.legalMoves()) {
             if (m.getFrom() == s) {
-                DisplayBoardBackground[parseMove(m.getTo()).get(0)][parseMove(m.getTo()).get(1)].setBackgroundColor(R.color.colorSelected);
+                DisplayBoardBackgroundSelected[parseMove(m.getTo()).get(0)][parseMove(m.getTo()).get(1)].setBackgroundColor(Color.parseColor("#A67FFFD4"));
+
             }
         }
     }
@@ -755,10 +867,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    public void undo (View view){
-    }
 
-    public void pawnChoice (View view){
-    }
 
 }
