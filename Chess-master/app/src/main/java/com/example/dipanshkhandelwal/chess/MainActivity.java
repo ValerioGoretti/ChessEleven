@@ -539,7 +539,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     board.doMove(mo);
                     clearBoardColor();
                     moveBoard(parseBoard());
-                    System.out.println(board.toString());
+                    //System.out.println(board.toString());
                     clearDuble();
                 }else {
                         clearBoardColor();
@@ -555,7 +555,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             colorRedking(parseBoard());
         }
         if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
-            System.out.println("scacco matto or Draw or stallo");
+            //System.out.println("scacco matto or Draw or stallo");
             game_over.setVisibility(View.VISIBLE);
             /*
             Dato che poi per le ripetizioni trova altre mosse meglio cambiare pagina
@@ -581,15 +581,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         board.doMove(new Move(c1,c2,lastChoice));
         clearBoardColor();
         moveBoard(parseBoard());
-        System.out.println(board.toString());
+        //System.out.println(board.toString());
         clearDuble();
     }
 
 
     private boolean isaMove(Move mo) {
-        for (Move m : board.legalMoves()) {
-           System.out.println(m.toString());
-        }
+
         for (Move m : board.legalMoves()) {
             if (m.equals(mo) || m.toString().contains(mo.toString()))
                 return true;
