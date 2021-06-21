@@ -9,6 +9,58 @@
     android:background="@color/backgroundBoard"
     >
 
+    <Button
+        android:layout_width="260dp"
+        android:layout_height="40dp"
+        android:background="@drawable/opponent_name"
+        app:layout_constraintBottom_toTopOf="@+id/gridLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        android:layout_marginLeft="11dp"
+        android:id="@+id/opponent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageView2"
+        app:layout_constraintVertical_bias="0"
+        android:layout_marginTop="40dp"></Button>
+
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/screencast"
+        app:layout_constraintBottom_toTopOf="@+id/gridLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/screen"
+        app:layout_constraintHorizontal_bias="0.633"
+        app:layout_constraintStart_toEndOf="@+id/opponent"
+        app:layout_constraintTop_toTopOf="@+id/imageView2"
+        app:layout_constraintVertical_bias="0"
+        android:layout_marginTop="40dp"></Button>
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/settings"
+        app:layout_constraintBottom_toTopOf="@+id/gridLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/settings"
+        app:layout_constraintHorizontal_bias="0.633"
+        app:layout_constraintStart_toEndOf="@+id/opponent"
+        app:layout_constraintTop_toTopOf="@+id/screen"
+        android:layout_marginTop="60dp"
+        app:layout_constraintVertical_bias="0"></Button>
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/best_move"
+        app:layout_constraintBottom_toTopOf="@+id/gridLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/bestmove"
+        app:layout_constraintHorizontal_bias="0.633"
+        app:layout_constraintStart_toEndOf="@+id/opponent"
+        app:layout_constraintTop_toTopOf="@+id/settings"
+        android:layout_marginTop="60dp"
+        app:layout_constraintVertical_bias="0"></Button>
+
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

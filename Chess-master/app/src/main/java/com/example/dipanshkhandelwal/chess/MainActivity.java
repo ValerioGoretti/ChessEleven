@@ -823,7 +823,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (int row=0;row<8;row++){
             for (int col=0; col<8; col++){
                 if (matrix[row][col].equals(king))
-                    DisplayBoardBackground[col][row].setBackgroundColor(Color.parseColor("#fc0703"));
+                    DisplayBoardBackgroundSelected[col][row].setBackgroundColor(Color.parseColor("#A6fc0703"));
             }
         }
     }
