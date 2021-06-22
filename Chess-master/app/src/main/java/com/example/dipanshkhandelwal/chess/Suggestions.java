@@ -4,26 +4,14 @@ import java.util.ArrayList;
 
 public class Suggestions {
 
-    ArrayList<String> tasks=new ArrayList<>();
+    private ArrayList<String> tasks=new ArrayList<>();
+    private String firstMessage="Please, say 'Assistente' to use the vocal interface. When the assistent is listening, try the following commands: \n'Muovi il pedone da c2 a c4'\n'Apri le impostazioni'\n'Dammi un suggerimento'\n'Proietta la partita'";
 
-    public Suggestions(){
-        tasks.add("'Muovi il pedone da c2 a c4'");
-        tasks.add("'Dammi un consiglio'");
-        tasks.add("'Mostrami le impostazioni'");
-        tasks.add("'Proietta lo schermo'");
-    }
+
     public String yesNoSuggestions(){
         return "'yes'\n'no'";
     }
-
-    public String getCommandSuggestions(){
-        String text="";
-        for(String s: tasks){
-
-            text=text+s+"\n";
-        }
-        return text;
+    public String getFirstMessage(){return firstMessage;}
 
 
-    }
 }

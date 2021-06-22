@@ -39,6 +39,7 @@ public class MainActivity2 extends AppCompatActivity implements
     private MediaPlayer listeningSound;
     private TextToCommand textToCommand=new TextToCommand();
     private int currentTask=0;
+    private Button imlistening;
     private int currentStep=0;
     private void resetSpeechRecognizer() {
         if(speech != null)
@@ -62,6 +63,7 @@ public class MainActivity2 extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main2);
         // UI initialisation
         returnedText =(TextView) findViewById(R.id.X);
