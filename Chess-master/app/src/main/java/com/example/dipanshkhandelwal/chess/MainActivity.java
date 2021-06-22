@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Move proposedMove;
     private ImageView imlistenig;
     private Suggestions suggestions=new Suggestions();
-
+    private Player player= new Player();
 
 
     private void resetSpeechRecognizer() {
@@ -844,6 +844,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     board.doMove(mo);
                     clearBoardColor();
                     moveBoard(parseBoard());
+                    /*
+                    ------------------------------------------------
+                    COMPUTER -> GIOCATORE AVVERSARIO
+                    ------------------------------------------------
+                    NOTE: try and catch per lo sleep
+
+                     */
+
+                    board.doMove(player.eseguiMossa(board.legalMoves()));
+                    try
+                    {
+                        Thread.sleep(500);
+                    }
+                    catch(InterruptedException ex)
+                    {
+                        Thread.currentThread().interrupt();
+                    }
+
+                    moveBoard(parseBoard());
+                    /*
+                    ---------------------FINE-----------------------
+                    COMPUTER -> GIOCATORE AVVERSARIO
+                    ------------------------------------------------
+                     */
                     //System.out.println(board.toString());
                     clearDuble();
                 }else {
@@ -888,6 +912,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         board.doMove(new Move(c1,c2,lastChoice));
         clearBoardColor();
         moveBoard(parseBoard());
+
+        /*
+         ------------------------------------------------
+         COMPUTER -> GIOCATORE AVVERSARIO
+         ------------------------------------------------
+         NOTE: try and catch per lo sleep
+        */
+
+        Move plmo=player.eseguiMossa(board.legalMoves());
+        board.doMove(plmo);
+        try
+        {
+            Thread.sleep(500);
+        }
+        catch(InterruptedException ex)
+        {
+            Thread.currentThread().interrupt();
+        }
+
+        moveBoard(parseBoard());
+        /*
+         ---------------------FINE-----------------------
+         COMPUTER -> GIOCATORE AVVERSARIO
+         ------------------------------------------------
+        */
+
         clearDuble();
     }
 
