@@ -23,6 +23,7 @@ public class TextToCommand {
         tutorial= new HashSet<>();
     }
 
+
     public String getTriggerCommand(String sentence){
         System.out.println("STO VALUTANDO "+sentence);
         String sentenceLower=sentence.toLowerCase();

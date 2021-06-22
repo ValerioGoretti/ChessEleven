@@ -1,11 +1,9 @@
 package com.example.dipanshkhandelwal.chess;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -18,36 +16,22 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.dipanshkhandelwal.chess.Pieces.Bishop;
-import com.example.dipanshkhandelwal.chess.Pieces.King;
-import com.example.dipanshkhandelwal.chess.Pieces.Knight;
-import com.example.dipanshkhandelwal.chess.Pieces.Pawn;
-import com.example.dipanshkhandelwal.chess.Pieces.Queen;
-import com.example.dipanshkhandelwal.chess.Pieces.Rook;
 import com.github.bhlangonijr.chesslib.Board;
 import com.github.bhlangonijr.chesslib.Piece;
 import com.github.bhlangonijr.chesslib.Side;
 import com.github.bhlangonijr.chesslib.Square;
 import com.github.bhlangonijr.chesslib.move.Move;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RecognitionListener {
-
     public Square c1=null;
     public Square c2=null;
     public Square click = null;
@@ -70,6 +54,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int currentTask=0;
     private int currentStep=0;
     private Move proposedMove;
+    private Suggestions suggestions=new Suggestions();
+
+
     private void resetSpeechRecognizer() {
         if(speech != null)
             speech.destroy();
@@ -114,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 isTriggered=false;
             }
         };
-        // check for permission
         int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
@@ -122,16 +108,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         setRecogniserIntent();
         speech.startListening(recognizerIntent);
-
-
-
-
     }
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions, @NonNull  int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         if (requestCode == PERMISSIONS_REQUEST_RECORD_AUDIO) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 speech.startListening(recognizerIntent);
@@ -142,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+
     @Override
     public void onResume() {
         Log.i(LOG_TAG, "resume");
@@ -185,18 +167,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         HashSet<String> res=new HashSet(matches);
         String text = "";
         if (matches!=null) {
-            text = matches.get(0);
+            for(String t:matches){
+                text+=t+" ";
+            }
             if(currentTask==0){
-
                 if (res.contains("assistente") || res.contains("Assistente")) {
                     if (!isTriggered) {
                         isTriggered = true;
                         timer.start();
                         listeningSound.start();
+                        returnedText.setText(suggestions.getCommandSuggestions());
                     }
                 } else {
                     if (isTriggered) {
-
                         returnedText.setText(textToCommand.getTriggerCommand(text.toLowerCase()));
                         isTriggered = false;
                         String mossa=textToCommand.getMove(text.toLowerCase());
@@ -206,36 +189,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             else {System.out.println("Correct Move! "+m.toString());
                                 System.out.println("Piece moved  " + board.getPiece(m.getFrom()));
                                 proposedMove=m;
-                                returnedText.setText("Do you confirm the move: "+mossa+"?");currentTask=1;currentStep=2;
+                                returnedText.setText("Do you confirm the move:\n"+board.getPiece(m.getFrom()).toString().toLowerCase().replace("_"," ")+" from "+m.getFrom()+" to "+m.getTo()+"?");currentTask=1;currentStep=2;
                             }
                            }
                         else{
                         returnedText.setText("I didn't understand the command. Please try again.");
                         }
-
-
-
                     }
                 }
 
             }
             else{
-                if(text.toLowerCase().equals("indietro")){returnedText.setText(" ");currentTask=0;}
+                if(text.toLowerCase().contains("indietro")){returnedText.setText(" ");currentTask=0;}
                 if(currentTask==10){
-
                        String promozione=text.toLowerCase();
                        View v=null;
-                       switch (promozione){
-                           case "regina":  v = findViewById(getResources().getIdentifier("pawn_queen","id", getBaseContext().getPackageName()));
-                                         break;
-                           case "torre":  v = findViewById(getResources().getIdentifier("pawn_rock","id", getBaseContext().getPackageName()));
-                                          break;
-                           case "cavallo":  v =findViewById(getResources().getIdentifier("pawn_knight","id", getBaseContext().getPackageName()));
-                                         break;
-                           case "alfiere":  v =findViewById(getResources().getIdentifier("pawn_bishop","id", getBaseContext().getPackageName()));
-                                        break;
-
-                       }
+                           if (promozione.contains("regina")){v = findViewById(getResources().getIdentifier("pawn_queen","id", getBaseContext().getPackageName()));
+                                         }
+                          else if(promozione.contains("torre")){  v = findViewById(getResources().getIdentifier("pawn_rock","id", getBaseContext().getPackageName()));
+                                          }
+                          else if(promozione.contains("cavallo")){ v =findViewById(getResources().getIdentifier("pawn_knight","id", getBaseContext().getPackageName()));
+                                        }
+                          else if(promozione.contains("alfiere")) {
+                               v = findViewById(getResources().getIdentifier("pawn_bishop", "id", getBaseContext().getPackageName()));
+                           }
                        if (v==null) {returnedText.setText("Plese chose among 'regina','cavallo','alfiere' or 'torre' "); }
                        else{returnedText.setText("Done!");currentTask=0;currentStep=0;pawnChoice(v);proposedMove=null;}
                 }
@@ -246,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //returnedText.setText("Do you confirm the move: "+mossa+"?");currentStep+=1;}}
                     if (currentStep==2 && proposedMove!=null){
                         System.out.println(text.toLowerCase());
-                        if(text.toLowerCase().equals("sì")){
+                        if(text.contains("sì")){
                             currentTask=0;
                             currentStep=0;
                             System.out.println("Task 1. ");
@@ -261,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             onClick(to);
                             proposedMove=null;
                         }
-                        if(text.toLowerCase().equals("no")){
+                        if(text.contains("no")){
                             currentStep=0;
                             currentTask=0;
                             returnedText.setText("");
@@ -270,7 +247,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
-        // returnedText.setText(text);
         speech.startListening(recognizerIntent);
     }
 
