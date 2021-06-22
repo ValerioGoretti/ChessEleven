@@ -196,20 +196,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 } else {
                     if (isTriggered) {
+
                         returnedText.setText(textToCommand.getTriggerCommand(text.toLowerCase()));
                         isTriggered = false;
-                        //if(returnedText.getText().equals("What move do you want to do?")){currentTask=1;currentStep=1;}
                         String mossa=textToCommand.getMove(text.toLowerCase());
                         if (!mossa.equals("I didn't understand the move")){
-
                             Move m=searchMove(mossa);
-                            if (m==null) System.out.println("Uncorrect move! Try again");
-                            else{System.out.println("Correct Move! "+m.toString());
+                            if (m==null) {returnedText.setText("Uncorrect move! Try again");}
+                            else {System.out.println("Correct Move! "+m.toString());
                                 System.out.println("Piece moved  " + board.getPiece(m.getFrom()));
                                 proposedMove=m;
+                                returnedText.setText("Do you confirm the move: "+mossa+"?");currentTask=1;currentStep=2;
                             }
-                            returnedText.setText("Do you confirm the move: "+mossa+"?");currentTask=1;currentStep=2;}
-
+                           }
+                        else{
+                        returnedText.setText("I didn't understand the command. Please try again.");
+                        }
 
 
 
@@ -235,31 +237,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                        }
                        if (v==null) {returnedText.setText("Plese chose among 'regina','cavallo','alfiere' or 'torre' "); }
-                       else{returnedText.setText("Done!");currentTask=0;currentStep=0;pawnChoice(v);}
+                       else{returnedText.setText("Done!");currentTask=0;currentStep=0;pawnChoice(v);proposedMove=null;}
                 }
                 if (currentTask==1){
                     //if (currentStep==1){
                     //  String mossa=textToCommand.getMove(text.toLowerCase());
                     // if (!mossa.equals("I didn't understand the move")){
                     //returnedText.setText("Do you confirm the move: "+mossa+"?");currentStep+=1;}}
-                    if (currentStep==2){
+                    if (currentStep==2 && proposedMove!=null){
                         System.out.println(text.toLowerCase());
                         if(text.toLowerCase().equals("sì")){
                             currentTask=0;
                             currentStep=0;
                             System.out.println("Task 1. ");
                             returnedText.setText("Done!");
-                            //board.doMove(proposedMove);
                             List<Integer> coordinate_from=parseMove(proposedMove.getFrom());
                             String coordinate_f="R"+coordinate_from.get(0) +""+coordinate_from.get(1);
                             View from=findViewById(getResources().getIdentifier(coordinate_f,"id", getBaseContext().getPackageName()));
                             onClick(from);
-
-
                             List<Integer> coordinate_to=parseMove(proposedMove.getTo());
                             String coordinate_t="R"+coordinate_to.get(0) +""+coordinate_to.get(1);
                             View to=findViewById(getResources().getIdentifier(coordinate_t,"id", getBaseContext().getPackageName()));
                             onClick(to);
+                            proposedMove=null;
                         }
                         if(text.toLowerCase().equals("no")){
                             currentStep=0;
