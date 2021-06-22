@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,7 +55,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int currentTask=0;
     private int currentStep=0;
     private Move proposedMove;
+    private ImageView imlistenig;
     private Suggestions suggestions=new Suggestions();
+
 
 
     private void resetSpeechRecognizer() {
@@ -84,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         setContentView(R.layout.activity_main);
         initializeBoard();
+        imlistenig=(ImageView) findViewById(R.id.imlistening);
         listeningSound=MediaPlayer.create(this,R.raw.listening);
         game_over = (TextView) findViewById(R.id.game_over);
         pawn_choices = (LinearLayout) findViewById(R.id.pawn_chioces);
@@ -98,7 +102,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             @Override
             public void onFinish() {
+
                 isTriggered=false;
+                if(currentTask==0){
+                    returnedText.setText("I didn't understand the first command! Please try again");
+                    new CountDownTimer(3000,1000){
+                        @Override
+                        public void onTick(long l) {
+
+                        }
+                        @Override
+                        public void onFinish() {
+                            returnedText.setText(suggestions.getFirstMessage());
+                            imlistenig.setVisibility(View.INVISIBLE);
+                        }
+                    }.start();
+                }
+
             }
         };
         int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
@@ -176,7 +196,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         isTriggered = true;
                         timer.start();
                         listeningSound.start();
-                        returnedText.setText(suggestions.getCommandSuggestions());
+                        imlistenig.setVisibility(View.VISIBLE);
+
                     }
                 } else {
                     if (isTriggered) {
@@ -185,22 +206,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         String mossa=textToCommand.getMove(text.toLowerCase());
                         if (!mossa.equals("I didn't understand the move")){
                             Move m=searchMove(mossa);
-                            if (m==null) {returnedText.setText("Uncorrect move! Try again");}
+
+                            if (m==null) {
+                                returnedText.setText("Uncorrect move! Try again");
+                                new CountDownTimer(3000,1000){
+                                    @Override
+                                    public void onTick(long l) {
+
+                                    }
+                                    @Override
+                                    public void onFinish() {
+                                        returnedText.setText(suggestions.getFirstMessage());
+                                        imlistenig.setVisibility(View.GONE);
+                                    }
+                                }.start();
+                                }
                             else {System.out.println("Correct Move! "+m.toString());
                                 System.out.println("Piece moved  " + board.getPiece(m.getFrom()));
                                 proposedMove=m;
-                                returnedText.setText("Do you confirm the move:\n"+board.getPiece(m.getFrom()).toString().toLowerCase().replace("_"," ")+" from "+m.getFrom()+" to "+m.getTo()+"?");currentTask=1;currentStep=2;
+                                returnedText.setText("Do you confirm the move:\n"+board.getPiece(m.getFrom()).toString().toLowerCase().replace("_"," ")+" from "+m.getFrom()+" to "+m.getTo()+"?\n\n'si'\n\n'no'");currentTask=1;currentStep=2;
                             }
                            }
                         else{
-                        returnedText.setText("I didn't understand the command. Please try again.");
+
+                            returnedText.setText("I didn't understand the first command! Please try again");
+                            new CountDownTimer(3000,1000){
+                                @Override
+                                public void onTick(long l) {
+
+                                }
+                                @Override
+                                public void onFinish() {
+                                    returnedText.setText(suggestions.getFirstMessage());
+                                    imlistenig.setVisibility(View.INVISIBLE);
+                                }
+                            }.start();
                         }
                     }
                 }
 
             }
             else{
-                if(text.toLowerCase().contains("indietro")){returnedText.setText(" ");currentTask=0;}
+                if(text.toLowerCase().contains("indietro")){returnedText.setText(" ");currentTask=0;imlistenig.setVisibility(View.GONE);returnedText.setText(suggestions.getFirstMessage());}
                 if(currentTask==10){
                        String promozione=text.toLowerCase();
                        View v=null;
@@ -213,21 +260,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                           else if(promozione.contains("alfiere")) {
                                v = findViewById(getResources().getIdentifier("pawn_bishop", "id", getBaseContext().getPackageName()));
                            }
-                       if (v==null) {returnedText.setText("Plese chose among 'regina','cavallo','alfiere' or 'torre' "); }
-                       else{returnedText.setText("Done!");currentTask=0;currentStep=0;pawnChoice(v);proposedMove=null;}
+                       if (v==null) {returnedText.setText("\"Please chose among:\\n'Regina'\\n'Alfiere'\\n'Torre'\\n'Cavallo'\""); }
+                       else{returnedText.setText(suggestions.getFirstMessage());currentTask=0;currentStep=0;pawnChoice(v);proposedMove=null;imlistenig.setVisibility(View.GONE);imlistenig.setVisibility(View.INVISIBLE);}
                 }
                 if (currentTask==1){
-                    //if (currentStep==1){
-                    //  String mossa=textToCommand.getMove(text.toLowerCase());
-                    // if (!mossa.equals("I didn't understand the move")){
-                    //returnedText.setText("Do you confirm the move: "+mossa+"?");currentStep+=1;}}
                     if (currentStep==2 && proposedMove!=null){
                         System.out.println(text.toLowerCase());
                         if(text.contains("sì")){
                             currentTask=0;
                             currentStep=0;
                             System.out.println("Task 1. ");
-                            returnedText.setText("Done!");
+                            returnedText.setText(suggestions.getFirstMessage());
                             List<Integer> coordinate_from=parseMove(proposedMove.getFrom());
                             String coordinate_f="R"+coordinate_from.get(0) +""+coordinate_from.get(1);
                             View from=findViewById(getResources().getIdentifier(coordinate_f,"id", getBaseContext().getPackageName()));
@@ -237,11 +280,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             View to=findViewById(getResources().getIdentifier(coordinate_t,"id", getBaseContext().getPackageName()));
                             onClick(to);
                             proposedMove=null;
+                            imlistenig.setVisibility(View.GONE);
                         }
                         if(text.contains("no")){
                             currentStep=0;
                             currentTask=0;
-                            returnedText.setText("");
+                            returnedText.setText(suggestions.getFirstMessage());
+                            imlistenig.setVisibility(View.GONE);
                         }
                     }
                 }
@@ -786,10 +831,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if(board.getPiece(mo.getFrom())== Piece.WHITE_PAWN && (mo.getTo()==Square.A8 || mo.getTo()==Square.B8 || mo.getTo()==Square.C8 || mo.getTo()==Square.D8 || mo.getTo()==Square.E8 || mo.getTo()==Square.F8 || mo.getTo()==Square.G8 || mo.getTo()==Square.H8)){
                         currentTask=10;
                         pawn_choices.setVisibility(View.VISIBLE);
+                        imlistenig.setVisibility(View.VISIBLE);
                         return;
                     }else {
                         if(board.getPiece(mo.getFrom())== Piece.BLACK_PAWN && (mo.getTo()==Square.A1 || mo.getTo()==Square.B1 || mo.getTo()==Square.C1 || mo.getTo()==Square.D1 || mo.getTo()==Square.E1 || mo.getTo()==Square.F1 || mo.getTo()==Square.G1 || mo.getTo()==Square.H1)){
                             pawn_choices.setVisibility(View.VISIBLE);
+                            imlistenig.setVisibility(View.VISIBLE);
                             currentTask=10;
                             return;
                         }
@@ -825,6 +872,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void pawnChoice (View view){
         pawn_choices.setVisibility(View.INVISIBLE);
+        imlistenig.setVisibility(View.INVISIBLE);
+        returnedText.setText("Please chose among:\n'Regina'\n'Alfiere'\n'Torre'\n'Cavallo'");
         TextView t= (TextView) view;
         switch (t.getText().toString()){
             case "Queen":   lastChoice = (board.getSideToMove().equals(Side.WHITE)) ?  Piece.WHITE_QUEEN :  Piece.BLACK_QUEEN;
@@ -839,7 +888,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         board.doMove(new Move(c1,c2,lastChoice));
         clearBoardColor();
         moveBoard(parseBoard());
-        //System.out.println(board.toString());
         clearDuble();
     }
 
