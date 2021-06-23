@@ -201,18 +201,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 } else {
                     if (isTriggered) {
-                        returnedText.setText(textToCommand.getTriggerCommand(text.toLowerCase()));
+                        String result=textToCommand.getTriggerCommand(text.toLowerCase());
                         isTriggered = false;
-                        String mossa=textToCommand.getMove(text.toLowerCase());
-                        if (!mossa.equals("I didn't understand the move")){
-                            Move m=searchMove(mossa);
-
-                            if (m==null) {
+                        Boolean found=false;
+                        if (result.equals("What move do you want to do?")){
+                            found=true;
+                        String mossa = textToCommand.getMove(text.toLowerCase());
+                        if (!mossa.equals("I didn't understand the move")) {
+                            Move m = searchMove(mossa);
+                            if (m == null) {
                                 returnedText.setText("Uncorrect move! Try again");
-                                new CountDownTimer(3000,1000){
+                                new CountDownTimer(3000, 1000) {
                                     @Override
                                     public void onTick(long l) {
-
                                     }
                                     @Override
                                     public void onFinish() {
@@ -220,14 +221,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         imlistenig.setVisibility(View.GONE);
                                     }
                                 }.start();
-                                }
-                            else {System.out.println("Correct Move! "+m.toString());
+                            } else {
+                                System.out.println("Correct Move! " + m.toString());
                                 System.out.println("Piece moved  " + board.getPiece(m.getFrom()));
-                                proposedMove=m;
-                                returnedText.setText("Do you confirm the move:\n"+board.getPiece(m.getFrom()).toString().toLowerCase().replace("_"," ")+" from "+m.getFrom()+" to "+m.getTo()+"?\n\n'si'\n\n'no'");currentTask=1;currentStep=2;
+                                proposedMove = m;
+                                returnedText.setText("Do you confirm the move:\n" + board.getPiece(m.getFrom()).toString().toLowerCase().replace("_", " ") + " from " + m.getFrom() + " to " + m.getTo() + "?\n\n'si'\n\n'no'");
+                                currentTask = 1;
+                                currentStep = 2;
                             }
-                           }
-                        else{
+                        }}
+
+
+                        if(result.equals("What kind of help do you want?\n\n'Dimmi le mosse per il pedone in c2'\n\n'Esegui la miglior mossa possibile'\n\n'indietro'")){
+                            returnedText.setText(result);
+                            found=true;
+                            currentTask=2;
+
+
+                        }
+                        if (!found){
 
                             returnedText.setText("I didn't understand the first command! Please try again");
                             new CountDownTimer(3000,1000){
@@ -266,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (currentTask==1){
                     if (currentStep==2 && proposedMove!=null){
                         System.out.println(text.toLowerCase());
-                        if(text.contains("sì")){
+                        if(text.toLowerCase().contains("sì")){
                             currentTask=0;
                             currentStep=0;
                             System.out.println("Task 1. ");
@@ -282,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             proposedMove=null;
                             imlistenig.setVisibility(View.GONE);
                         }
-                        if(text.contains("no")){
+                        if(text.toLowerCase().contains("no")){
                             currentStep=0;
                             currentTask=0;
                             returnedText.setText(suggestions.getFirstMessage());
@@ -290,6 +302,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 }
+                if (currentTask==2){
+                    if (currentStep==0){
+                        String cell = textToCommand.getCell(text.toLowerCase());
+                        if (!cell.equals("I didn't understand")){
+                            returnedText.setText("Le mosse possibili sono bla bla bla");
+
+                        }
+                        else{
+                            returnedText.setText("Altro task");
+
+                        }
+
+                    }
+                }
+
             }
         }
         speech.startListening(recognizerIntent);
