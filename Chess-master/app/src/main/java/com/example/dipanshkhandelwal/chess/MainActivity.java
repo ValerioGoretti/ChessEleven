@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView imlistenig;
     private Suggestions suggestions=new Suggestions();
     private Player player= new Player();
+    private boolean ismyturn=true;
 
 
     private void resetSpeechRecognizer() {
@@ -617,6 +618,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         // Assign the Square clicked by the user to click
+
         switch (v.getId()) {
             case R.id.R00:
                 click = Square.A1;
@@ -818,32 +820,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
 
-        ArrayList<Move> allowMoves = new ArrayList<>();
-        if (c1==null) {
-            c1=click;
-            colorMove(c1);
 
-        } else {
-            if (c1!=null && c2==null) {
-                c2=click;
-                Move mo=new Move(c1,c2);
-                if(isaMove(mo)){
-                    if(board.getPiece(mo.getFrom())== Piece.WHITE_PAWN && (mo.getTo()==Square.A8 || mo.getTo()==Square.B8 || mo.getTo()==Square.C8 || mo.getTo()==Square.D8 || mo.getTo()==Square.E8 || mo.getTo()==Square.F8 || mo.getTo()==Square.G8 || mo.getTo()==Square.H8)){
-                        currentTask=10;
-                        pawn_choices.setVisibility(View.VISIBLE);
-                        imlistenig.setVisibility(View.VISIBLE);
-                        return;
-                    }else {
-                        if(board.getPiece(mo.getFrom())== Piece.BLACK_PAWN && (mo.getTo()==Square.A1 || mo.getTo()==Square.B1 || mo.getTo()==Square.C1 || mo.getTo()==Square.D1 || mo.getTo()==Square.E1 || mo.getTo()==Square.F1 || mo.getTo()==Square.G1 || mo.getTo()==Square.H1)){
+        ArrayList<Move> allowMoves = new ArrayList<>();
+
+        if(ismyturn){
+            if (c1==null) {
+                c1=click;
+                colorMove(c1);
+
+            } else {
+                if (c1!=null && c2==null) {
+                    c2=click;
+                    Move mo=new Move(c1,c2);
+                    if(isaMove(mo)){
+                        if(board.getPiece(mo.getFrom())== Piece.WHITE_PAWN && (mo.getTo()==Square.A8 || mo.getTo()==Square.B8 || mo.getTo()==Square.C8 || mo.getTo()==Square.D8 || mo.getTo()==Square.E8 || mo.getTo()==Square.F8 || mo.getTo()==Square.G8 || mo.getTo()==Square.H8)){
+                            currentTask=10;
                             pawn_choices.setVisibility(View.VISIBLE);
                             imlistenig.setVisibility(View.VISIBLE);
-                            currentTask=10;
                             return;
+                        }else {
+                            if(board.getPiece(mo.getFrom())== Piece.BLACK_PAWN && (mo.getTo()==Square.A1 || mo.getTo()==Square.B1 || mo.getTo()==Square.C1 || mo.getTo()==Square.D1 || mo.getTo()==Square.E1 || mo.getTo()==Square.F1 || mo.getTo()==Square.G1 || mo.getTo()==Square.H1)){
+                                pawn_choices.setVisibility(View.VISIBLE);
+                                imlistenig.setVisibility(View.VISIBLE);
+                                currentTask=10;
+                                return;
+                            }
                         }
-                    }
-                    board.doMove(mo);
-                    clearBoardColor();
-                    moveBoard(parseBoard());
+                        board.doMove(mo);
+                        clearBoardColor();
+                        moveBoard(parseBoard());
+
+                        if (board.isKingAttacked()){
+                            colorRedking(parseBoard());
+                        }
+                        if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
+
+                            game_over.setVisibility(View.VISIBLE);
+                        }
+
                     /*
                     ------------------------------------------------
                     COMPUTER -> GIOCATORE AVVERSARIO
@@ -852,47 +866,54 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                      */
 
-                    board.doMove(player.eseguiMossa(board.legalMoves()));
-                    try
-                    {
-                        Thread.sleep(500);
-                    }
-                    catch(InterruptedException ex)
-                    {
-                        Thread.currentThread().interrupt();
-                    }
+                        board.doMove(player.eseguiMossa(board.legalMoves()));
+                        ismyturn=false;
+                        CountDownTimer timer=new CountDownTimer(2000,1000) {
+                            public void onTick(long millisUntilFinished) {
 
-                    moveBoard(parseBoard());
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                moveBoard(parseBoard());
+                                clearBoardColor();
+                                if (board.isKingAttacked()){
+                                    colorRedking(parseBoard());
+                                }
+                                ismyturn=true;
+                            }
+                        }.start();
                     /*
                     ---------------------FINE-----------------------
                     COMPUTER -> GIOCATORE AVVERSARIO
                     ------------------------------------------------
                      */
-                    //System.out.println(board.toString());
-                    clearDuble();
-                }else {
+
+                        if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
+                            //System.out.println("scacco matto or Draw or stallo");
+                            game_over.setVisibility(View.VISIBLE);
+                        }
+                        clearDuble();
+                    }else {
                         clearBoardColor();
                         c1=c2;
                         c2=null;
                         c1=click;
                         colorMove(c1);
+                    }
                 }
+            }
+            if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
+                //System.out.println("scacco matto or Draw or stallo");
+                game_over.setVisibility(View.VISIBLE);
             }
         }
 
-        if (board.isKingAttacked()){
-            colorRedking(parseBoard());
-        }
-        if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
-            //System.out.println("scacco matto or Draw or stallo");
-            game_over.setVisibility(View.VISIBLE);
-            /*
-            Dato che poi per le ripetizioni trova altre mosse meglio cambiare pagina
-             */
-        }
 
 
     }
+
+
 
     public void pawnChoice (View view){
         pawn_choices.setVisibility(View.INVISIBLE);
@@ -909,10 +930,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case "Knight":   lastChoice = (board.getSideToMove().equals(Side.WHITE)) ?  Piece.WHITE_KNIGHT :  Piece.BLACK_KNIGHT;
                             break;
         }
+
         board.doMove(new Move(c1,c2,lastChoice));
         clearBoardColor();
         moveBoard(parseBoard());
-
         /*
          ------------------------------------------------
          COMPUTER -> GIOCATORE AVVERSARIO
@@ -920,24 +941,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
          NOTE: try and catch per lo sleep
         */
 
-        Move plmo=player.eseguiMossa(board.legalMoves());
-        board.doMove(plmo);
-        try
-        {
-            Thread.sleep(500);
-        }
-        catch(InterruptedException ex)
-        {
-            Thread.currentThread().interrupt();
-        }
+        board.doMove(player.eseguiMossa(board.legalMoves()));
+        CountDownTimer timer=new CountDownTimer(2000,1000) {
 
-        moveBoard(parseBoard());
-        /*
+            @Override
+            public void onTick(long millisUntilFinished) {
+                if (millisUntilFinished==2000){
+                    ismyturn=false;
+                }
+
+            }
+
+            @Override
+            public void onFinish() {
+                moveBoard(parseBoard());
+                ismyturn=true;
+            }
+        }.start();
+         /*
          ---------------------FINE-----------------------
          COMPUTER -> GIOCATORE AVVERSARIO
          ------------------------------------------------
-        */
-
+         */
+        //System.out.println(board.toString());
         clearDuble();
     }
 
