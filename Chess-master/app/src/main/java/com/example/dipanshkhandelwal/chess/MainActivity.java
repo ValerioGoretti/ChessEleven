@@ -338,11 +338,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
                         }
-                        /*
-                        best move
-                         */
 
-                        if(textToCommand.isInBestMoves(returnedText.getText().toString().toLowerCase()))
+
+                        else if(textToCommand.isInBestMoves(text.toLowerCase()))
                         {
                             Move mo = player.eseguiMossa(board.legalMoves());
 
@@ -356,7 +354,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             View to=findViewById(getResources().getIdentifier(coordinate_t,"id", getBaseContext().getPackageName()));
                             onClick(to);
 
-                            returnedText.setText("ESEGUO");
+                            returnedText.setText("Executed best possible move!");
+                            new CountDownTimer(3000,1000){
+                                @Override
+                                public void onTick(long l) {
+
+                                }
+                                @Override
+                                public void onFinish() {
+                                    returnedText.setText(suggestions.getFirstMessage());
+                                    imlistenig.setVisibility(View.INVISIBLE);
+                                    currentTask=0;
+                                    currentStep=0;
+                                }
+                            }.start();
                         }
 
                     }
