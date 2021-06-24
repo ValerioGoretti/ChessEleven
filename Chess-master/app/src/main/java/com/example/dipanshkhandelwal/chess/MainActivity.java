@@ -307,12 +307,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (currentStep==0){
                         String cell = textToCommand.getCell(text.toLowerCase());
                         if (!cell.equals("I didn't understand")){
-                            returnedText.setText("Le mosse possibili sono bla bla bla");
+                            Square s=Square.fromValue(cell.toUpperCase().replaceAll("\\s",""));
+                            if(cellMoves(s).size()!=0){
+                                clearDuble();
+                                clearBoardColor();
+                                Piece piece=board.getPiece(s);
+                                returnedText.setText("Here the possible moves for the "+piece.toString().replace("_"," ")+" in "+cell.toUpperCase());
+                                List<Integer> coordinate=parseMove(s);
+                                String click="R"+coordinate.get(0)+""+coordinate.get(1);
+                                View viewCella=findViewById(getResources().getIdentifier(click,"id",getBaseContext().getPackageName()));
+                                onClick(viewCella);
+                                new CountDownTimer(3000,1000){
+                                    @Override
+                                    public void onTick(long l) {
+
+                                    }
+                                    @Override
+                                    public void onFinish() {
+                                        returnedText.setText(suggestions.getFirstMessage());
+                                        imlistenig.setVisibility(View.INVISIBLE);
+                                        currentTask=0;
+                                        currentStep=0;
+                                    }
+                                }.start();
+
+                            }
+                            else{
+                                returnedText.setText("No moves for the cell "+cell.toUpperCase());
+                            }
+
 
                         }
-                        else{
-                            returnedText.setText("Altro task");
+                        /*
+                        best move
+                         */
 
+                        if(textToCommand.isInBestMoves(returnedText.getText().toString().toLowerCase()))
+                        {
+                            Move mo = player.eseguiMossa(board.legalMoves());
+
+                            List<Integer> coordinate_from=parseMove(mo.getFrom());
+                            String coordinate_f="R"+coordinate_from.get(0) +""+coordinate_from.get(1);
+                            View from=findViewById(getResources().getIdentifier(coordinate_f,"id", getBaseContext().getPackageName()));
+                            onClick(from);
+
+                            List<Integer> coordinate_to=parseMove(mo.getTo());
+                            String coordinate_t="R"+coordinate_to.get(0) +""+coordinate_to.get(1);
+                            View to=findViewById(getResources().getIdentifier(coordinate_t,"id", getBaseContext().getPackageName()));
+                            onClick(to);
+
+                            returnedText.setText("ESEGUO");
                         }
 
                     }
@@ -1291,7 +1335,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return ret;
     }
 
-
+    /**
+     * giving s cell return all moves
+     */
+    private List<Move> cellMoves(Square s){
+        List<Move> moveList= new LinkedList<>();
+        for (Move mo: board.legalMoves()){
+            if (mo.getFrom().equals(s)){
+                moveList.add(mo);
+            }
+        }
+        return moveList;
+    }
 
 
 }
