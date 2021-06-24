@@ -16,7 +16,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -96,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         game_over.setVisibility(View.INVISIBLE);
         pawn_choices.setVisibility(View.INVISIBLE);
         returnedText =(TextView) findViewById(R.id.textAssistent);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(mToolbar);
         resetSpeechRecognizer();
         timer=new CountDownTimer(10000, 1000) {
             @Override
@@ -132,8 +137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         speech.startListening(recognizerIntent);
     }
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions, @NonNull  int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull  int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSIONS_REQUEST_RECORD_AUDIO) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -144,6 +148,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 finish();
             }
         }
+    }
+
+    @Override public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_fav)
+        {
+            startActivity(new Intent("android.settings.CAST_SETTINGS")); return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
