@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -59,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Suggestions suggestions=new Suggestions();
     private Player player= new Player();
     private boolean ismyturn=true;
+
+
 
 
     private void resetSpeechRecognizer() {
@@ -237,7 +240,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             returnedText.setText(result);
                             found=true;
                             currentTask=2;
+                        }
+                        if(result.equals("screen")){
 
+                            startActivity(new Intent("android.settings.CAST_SETTINGS"));
+                            found=true;
+
+                        }
+                        if(result.equals("What command do you want to do?")){
+                            currentTask=3;
+                            found=true;
+                            returnedText.setText("What command do you want to do?\n\n'Ricomincia la partita'\n'Esci dall'applicazione'\n\n'indietro'");
+
+                            LinearLayout settingsMenu = (LinearLayout) findViewById(R.id.settingsMenu);
+                                if (settingsMenu.getVisibility() != View.VISIBLE){
+                                    settingsMenu.setVisibility(View.VISIBLE);
+                                }else {
+                                    settingsMenu.setVisibility(View.GONE);
+                                }
 
                         }
                         if (!found){
@@ -1386,7 +1406,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (settingsMenu.getVisibility() != View.VISIBLE){
             settingsMenu.setVisibility(View.VISIBLE);
         }else {
-            settingsMenu.setVisibility(View.INVISIBLE);
+            settingsMenu.setVisibility(View.GONE);
         }
 
     }
