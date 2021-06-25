@@ -10,7 +10,9 @@ import android.os.CountDownTimer;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Player player= new Player();
     private boolean ismyturn=true;
     private LinearLayout settingsMenu ;
+    private TextToSpeech tt;
 
 
 
@@ -140,7 +143,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         setRecogniserIntent();
         speech.startListening(recognizerIntent);
+
+        tt = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                    tt.setLanguage(Locale.ITALIAN);
+                    tt.setSpeechRate((float)1);
+            }
+        });
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions, @NonNull  int[] grantResults) {
@@ -191,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.i(LOG_TAG, "onEndOfSpeech");
         speech.stopListening();
     }
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onResults(Bundle results) {
         Log.i(LOG_TAG, "onResults");
@@ -241,6 +254,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 System.out.println("Correct Move! " + m.toString());
                                 System.out.println("Piece moved  " + board.getPiece(m.getFrom()));
                                 proposedMove = m;
+                                String sentence= "Do you confirm the move:" + board.getPiece(m.getFrom()).toString().toLowerCase().replace("_", " ") + " from " + m.getFrom() + " to " + m.getTo() + "?";
+                                speak(sentence);
                                 returnedText.setText("Do you confirm the move:\n" + board.getPiece(m.getFrom()).toString().toLowerCase().replace("_", " ") + " from " + m.getFrom() + " to " + m.getTo() + "?\n\n'si'\n\n'no'");
                                 currentTask = 1;
                                 currentStep = 2;
@@ -1446,10 +1461,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         finish();
         startActivity(intent);
     }
+
+
     public void exit(View view){
-
         finish();
+    }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public void speak(String sentence){
+        tt.speak(sentence, TextToSpeech.QUEUE_FLUSH,null,null);
     }
 
     public void Back(View view) {
