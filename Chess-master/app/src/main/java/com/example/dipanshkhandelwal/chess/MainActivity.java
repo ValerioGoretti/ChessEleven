@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Suggestions suggestions=new Suggestions();
     private Player player= new Player();
     private boolean ismyturn=true;
+    private LinearLayout settingsMenu ;
 
 
 
@@ -97,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         pawn_choices = (LinearLayout) findViewById(R.id.pawn_chioces);
         game_over.setVisibility(View.INVISIBLE);
         pawn_choices.setVisibility(View.INVISIBLE);
+        settingsMenu=(LinearLayout) findViewById(R.id.settingsMenu);
         returnedText =(TextView) findViewById(R.id.textAssistent);
         resetSpeechRecognizer();
         timer=new CountDownTimer(10000, 1000) {
@@ -251,13 +253,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             currentTask=3;
                             found=true;
                             returnedText.setText("What command do you want to do?\n\n'Ricomincia la partita'\n'Esci dall'applicazione'\n\n'indietro'");
-
-                            LinearLayout settingsMenu = (LinearLayout) findViewById(R.id.settingsMenu);
-                                if (settingsMenu.getVisibility() != View.VISIBLE){
-                                    settingsMenu.setVisibility(View.VISIBLE);
-                                }else {
-                                    settingsMenu.setVisibility(View.GONE);
-                                }
+                            settingsMenu.setVisibility(View.VISIBLE);
 
                         }
                         if (!found){
@@ -1402,11 +1398,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void settings(View view) {
-        LinearLayout settingsMenu = (LinearLayout) findViewById(R.id.settingsMenu);
         if (settingsMenu.getVisibility() != View.VISIBLE){
             settingsMenu.setVisibility(View.VISIBLE);
         }else {
             settingsMenu.setVisibility(View.GONE);
+            currentTask=0;
+            currentStep=0;
+            returnedText.setText(suggestions.getFirstMessage());
+            imlistenig.setVisibility(View.GONE);
         }
 
     }
@@ -1420,5 +1419,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = getIntent();
         finish();
         startActivity(intent);
+    }
+    public void exit(View view){
+
+        finish();
+
     }
 }
