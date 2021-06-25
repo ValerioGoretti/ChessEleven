@@ -197,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.i(LOG_TAG, "onEndOfSpeech");
         speech.stopListening();
     }
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onResults(Bundle results) {
         Log.i(LOG_TAG, "onResults");
@@ -243,6 +244,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 System.out.println("Correct Move! " + m.toString());
                                 System.out.println("Piece moved  " + board.getPiece(m.getFrom()));
                                 proposedMove = m;
+                                String sentence= "Do you confirm the move:" + board.getPiece(m.getFrom()).toString().toLowerCase().replace("_", " ") + " from " + m.getFrom() + " to " + m.getTo() + "?";
+                                speak(sentence);
                                 returnedText.setText("Do you confirm the move:\n" + board.getPiece(m.getFrom()).toString().toLowerCase().replace("_", " ") + " from " + m.getFrom() + " to " + m.getTo() + "?\n\n'si'\n\n'no'");
                                 currentTask = 1;
                                 currentStep = 2;
