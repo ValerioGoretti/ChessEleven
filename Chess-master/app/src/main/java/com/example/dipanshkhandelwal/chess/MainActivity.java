@@ -360,17 +360,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         else if(textToCommand.isInBestMoves(text.toLowerCase()))
                         {
                             Move mo = player.eseguiMossa(board.legalMoves());
-
                             List<Integer> coordinate_from=parseMove(mo.getFrom());
                             String coordinate_f="R"+coordinate_from.get(0) +""+coordinate_from.get(1);
                             View from=findViewById(getResources().getIdentifier(coordinate_f,"id", getBaseContext().getPackageName()));
                             onClick(from);
-
                             List<Integer> coordinate_to=parseMove(mo.getTo());
                             String coordinate_t="R"+coordinate_to.get(0) +""+coordinate_to.get(1);
                             View to=findViewById(getResources().getIdentifier(coordinate_t,"id", getBaseContext().getPackageName()));
                             onClick(to);
-
                             returnedText.setText("Executed best possible move!");
                             new CountDownTimer(3000,1000){
                                 @Override
@@ -390,18 +387,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
                 if(currentTask==3){
-
-                    //if esci
-                    //if ricomincia
-                    //indietro
-                    if(text.toLowerCase().contains("indietro")){
-
-                        
+                    if(textToCommand.isFinish(text.toLowerCase())){
+                        finish();
                     }
-
-
+                    else if (textToCommand.isRestart(text.toLowerCase())){
+                        Intent intent = getIntent();
+                        finish();
+                        startActivity(intent);
+                    }
+                    else if(text.toLowerCase().contains("indietro")){
+                        settingsMenu.setVisibility(View.GONE);
+                        currentTask=0;
+                        currentStep=0;
+                        returnedText.setText(suggestions.getFirstMessage());
+                        imlistenig.setVisibility(View.GONE);
+                    }
                 }
-
             }
         }
         speech.startListening(recognizerIntent);
