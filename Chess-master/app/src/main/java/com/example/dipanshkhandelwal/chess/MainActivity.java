@@ -266,6 +266,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             found=true;
                             returnedText.setText("What command do you want to do?\n\n'Ricomincia la partita'\n'Esci dall'applicazione'\n\n'indietro'");
                             settingsMenu.setVisibility(View.VISIBLE);
+                            imlistenig.setVisibility(View.VISIBLE);
 
                         }
                         if (!found){
@@ -288,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
             else{
-                if(text.toLowerCase().contains("indietro")){returnedText.setText(" ");currentTask=0;imlistenig.setVisibility(View.GONE);returnedText.setText(suggestions.getFirstMessage());}
+                if(text.toLowerCase().contains("indietro")&&(currentTask!=3)){returnedText.setText(" ");currentTask=0;imlistenig.setVisibility(View.GONE);returnedText.setText(suggestions.getFirstMessage());}
                 if(currentTask==10){
                        String promozione=text.toLowerCase();
                        View v=null;
@@ -371,17 +372,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         else if(textToCommand.isInBestMoves(text.toLowerCase()))
                         {
                             Move mo = player.eseguiMossa(board.legalMoves());
-
                             List<Integer> coordinate_from=parseMove(mo.getFrom());
                             String coordinate_f="R"+coordinate_from.get(0) +""+coordinate_from.get(1);
                             View from=findViewById(getResources().getIdentifier(coordinate_f,"id", getBaseContext().getPackageName()));
                             onClick(from);
-
                             List<Integer> coordinate_to=parseMove(mo.getTo());
                             String coordinate_t="R"+coordinate_to.get(0) +""+coordinate_to.get(1);
                             View to=findViewById(getResources().getIdentifier(coordinate_t,"id", getBaseContext().getPackageName()));
                             onClick(to);
-
                             returnedText.setText("Executed best possible move!");
                             new CountDownTimer(3000,1000){
                                 @Override
@@ -400,7 +398,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     }
                 }
-
+                if(currentTask==3){
+                    if(textToCommand.isFinish(text.toLowerCase())){
+                        finish();
+                    }
+                    else if (textToCommand.isRestart(text.toLowerCase())){
+                        Intent intent = getIntent();
+                        finish();
+                        startActivity(intent);
+                    }
+                    else if(text.toLowerCase().contains("indietro")){
+                        settingsMenu.setVisibility(View.GONE);
+                        currentTask=0;
+                        currentStep=0;
+                        returnedText.setText(suggestions.getFirstMessage());
+                        imlistenig.setVisibility(View.GONE);
+                    }
+                }
             }
         }
         speech.startListening(recognizerIntent);
@@ -1382,7 +1396,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ret.add(Y.get(row));
         return ret;
     }
-
     /**
      * giving s cell return all moves
      */
@@ -1395,8 +1408,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         return moveList;
     }
-
-
     public void bestmove(View view) {
         Move mo=player.eseguiMossa(board.legalMoves());
         List<Integer> coordinate_from=parseMove(mo.getFrom());
