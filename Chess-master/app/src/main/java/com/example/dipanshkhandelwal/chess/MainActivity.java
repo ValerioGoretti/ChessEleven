@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isTriggered=false;
     private CountDownTimer timer;
     private MediaPlayer listeningSound;
+    private MediaPlayer doneSound;
+    private MediaPlayer errorSound;
     private TextToCommand textToCommand=new TextToCommand();
     private int currentTask=0;
     private int currentStep=0;
@@ -94,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initializeBoard();
         imlistenig=(ImageView) findViewById(R.id.imlistening);
         listeningSound=MediaPlayer.create(this,R.raw.listening);
+        doneSound=MediaPlayer.create(this,R.raw.done);
+        errorSound=MediaPlayer.create(this,R.raw.error);
         game_over = (TextView) findViewById(R.id.game_over);
         pawn_choices = (LinearLayout) findViewById(R.id.pawn_chioces);
         game_over.setVisibility(View.INVISIBLE);
@@ -104,13 +108,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         timer=new CountDownTimer(10000, 1000) {
             @Override
             public void onTick(long l) {
-                if (isTriggered==false){cancel();onFinish();}
+                if (isTriggered==false){cancel();}
             }
             @Override
             public void onFinish() {
 
+                if(isTriggered){errorSound.start();}
                 isTriggered=false;
                 if(currentTask==0){
+                    errorSound.start();
                     returnedText.setText("I didn't understand the first command! Please try again");
                     new CountDownTimer(3000,1000){
                         @Override
@@ -213,10 +219,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (result.equals("What move do you want to do?")){
                             found=true;
                         String mossa = textToCommand.getMove(text.toLowerCase());
-                        if (!mossa.equals("I didn't understand the move")) {
+                         if (!mossa.equals("I didn't understand the move")) {
                             Move m = searchMove(mossa);
+                            isTriggered=false;
+
                             if (m == null) {
                                 returnedText.setText("Uncorrect move! Try again");
+                                errorSound.start();
                                 new CountDownTimer(3000, 1000) {
                                     @Override
                                     public void onTick(long l) {
@@ -225,6 +234,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     public void onFinish() {
                                         returnedText.setText(suggestions.getFirstMessage());
                                         imlistenig.setVisibility(View.GONE);
+
                                     }
                                 }.start();
                             } else {
@@ -238,18 +248,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }}
 
 
-                        if(result.equals("What kind of help do you want?\n\n'Dimmi le mosse per il pedone in c2'\n\n'Esegui la miglior mossa possibile'\n\n'indietro'")){
+                        else if(result.equals("What kind of help do you want?\n\n'Dimmi le mosse per il pedone in c2'\n\n'Esegui la miglior mossa possibile'\n\n'indietro'")){
                             returnedText.setText(result);
                             found=true;
                             currentTask=2;
                         }
-                        if(result.equals("screen")){
-
+                        else if(result.equals("screen")){
                             startActivity(new Intent("android.settings.CAST_SETTINGS"));
                             found=true;
-
                         }
-                        if(result.equals("What command do you want to do?")){
+                        else if(result.equals("What command do you want to do?")){
                             currentTask=3;
                             found=true;
                             returnedText.setText("What command do you want to do?\n\n'Ricomincia la partita'\n'Esci dall'applicazione'\n\n'indietro'");
@@ -257,9 +265,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             imlistenig.setVisibility(View.VISIBLE);
 
                         }
-                        if (!found){
+                        else if (!found){
 
+                            isTriggered=false;
                             returnedText.setText("I didn't understand the first command! Please try again");
+                            errorSound.start();
                             new CountDownTimer(3000,1000){
                                 @Override
                                 public void onTick(long l) {
@@ -290,8 +300,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                           else if(promozione.contains("alfiere")) {
                                v = findViewById(getResources().getIdentifier("pawn_bishop", "id", getBaseContext().getPackageName()));
                            }
-                       if (v==null) {returnedText.setText("\"Please chose among:\\n'Regina'\\n'Alfiere'\\n'Torre'\\n'Cavallo'\""); }
-                       else{returnedText.setText(suggestions.getFirstMessage());currentTask=0;currentStep=0;pawnChoice(v);proposedMove=null;imlistenig.setVisibility(View.GONE);imlistenig.setVisibility(View.INVISIBLE);}
+                       if (v==null){returnedText.setText("\n Please chose among:\n'Regina'\n'Alfiere'\n'Torre'\n'Cavallo'\n");errorSound.start();}
+                       else{returnedText.setText(suggestions.getFirstMessage());currentTask=0;currentStep=0;pawnChoice(v);proposedMove=null;imlistenig.setVisibility(View.GONE);imlistenig.setVisibility(View.INVISIBLE);doneSound.start();}
                 }
                 if (currentTask==1){
                     if (currentStep==2 && proposedMove!=null){
@@ -311,6 +321,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             onClick(to);
                             proposedMove=null;
                             imlistenig.setVisibility(View.GONE);
+                            doneSound.start();
                         }
                         if(text.toLowerCase().contains("no")){
                             currentStep=0;
@@ -334,6 +345,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 String click="R"+coordinate.get(0)+""+coordinate.get(1);
                                 View viewCella=findViewById(getResources().getIdentifier(click,"id",getBaseContext().getPackageName()));
                                 onClick(viewCella);
+                                doneSound.start();
                                 new CountDownTimer(3000,1000){
                                     @Override
                                     public void onTick(long l) {
@@ -351,6 +363,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             }
                             else{
                                 returnedText.setText("No moves for the cell "+cell.toUpperCase());
+                                errorSound.start();
+
                             }
 
 
@@ -368,6 +382,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             String coordinate_t="R"+coordinate_to.get(0) +""+coordinate_to.get(1);
                             View to=findViewById(getResources().getIdentifier(coordinate_t,"id", getBaseContext().getPackageName()));
                             onClick(to);
+                            doneSound.start();
                             returnedText.setText("Executed best possible move!");
                             new CountDownTimer(3000,1000){
                                 @Override
