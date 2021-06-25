@@ -85,7 +85,9 @@
         app:layout_constraintStart_toEndOf="@+id/opponent"
         app:layout_constraintTop_toTopOf="@+id/screen"
         android:layout_marginTop="60dp"
-        app:layout_constraintVertical_bias="0"></Button>
+        app:layout_constraintVertical_bias="0"
+        android:onClick="settings"
+        tools:ignore="OnClick"></Button>
     <Button
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -97,7 +99,9 @@
         app:layout_constraintStart_toEndOf="@+id/opponent"
         app:layout_constraintTop_toTopOf="@+id/settings"
         android:layout_marginTop="60dp"
-        app:layout_constraintVertical_bias="0"></Button>
+        app:layout_constraintVertical_bias="0"
+        android:onClick="bestmove"
+        tools:ignore="OnClick"></Button>
 
 
     <ImageView

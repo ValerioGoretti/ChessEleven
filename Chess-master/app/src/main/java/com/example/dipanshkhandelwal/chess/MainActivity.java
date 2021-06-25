@@ -1360,4 +1360,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    public void bestmove(View view) {
+        Move mo=player.eseguiMossa(board.legalMoves());
+        List<Integer> coordinate_from=parseMove(mo.getFrom());
+        String coordinate_f="R"+coordinate_from.get(0) +""+coordinate_from.get(1);
+        View from=findViewById(getResources().getIdentifier(coordinate_f,"id", getBaseContext().getPackageName()));
+        onClick(from);
+        List<Integer> coordinate_to=parseMove(mo.getTo());
+        String coordinate_t="R"+coordinate_to.get(0) +""+coordinate_to.get(1);
+        View to=findViewById(getResources().getIdentifier(coordinate_t,"id", getBaseContext().getPackageName()));
+        onClick(to);
+    }
+
+    public void settings(View view) {
+        System.out.println("settings");
+    }
 }
