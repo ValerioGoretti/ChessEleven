@@ -1393,6 +1393,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void cast(View view) {
         System.out.println("cast");
+        startActivity(new Intent("android.settings.CAST_SETTINGS"));
     }
 
     public void restart(View view) {
