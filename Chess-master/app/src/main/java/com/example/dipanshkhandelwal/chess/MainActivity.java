@@ -254,6 +254,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             found=true;
                             returnedText.setText("What command do you want to do?\n\n'Ricomincia la partita'\n'Esci dall'applicazione'\n\n'indietro'");
                             settingsMenu.setVisibility(View.VISIBLE);
+                            imlistenig.setVisibility(View.VISIBLE);
 
                         }
                         if (!found){
@@ -276,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
             else{
-                if(text.toLowerCase().contains("indietro")){returnedText.setText(" ");currentTask=0;imlistenig.setVisibility(View.GONE);returnedText.setText(suggestions.getFirstMessage());}
+                if(text.toLowerCase().contains("indietro")&&(currentTask!=3)){returnedText.setText(" ");currentTask=0;imlistenig.setVisibility(View.GONE);returnedText.setText(suggestions.getFirstMessage());}
                 if(currentTask==10){
                        String promozione=text.toLowerCase();
                        View v=null;
@@ -387,6 +388,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
 
                     }
+                }
+                if(currentTask==3){
+
+                    //if esci
+                    //if ricomincia
+                    //indietro
+                    if(text.toLowerCase().contains("indietro")){
+
+                        
+                    }
+
+
                 }
 
             }
@@ -1370,7 +1383,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ret.add(Y.get(row));
         return ret;
     }
-
     /**
      * giving s cell return all moves
      */
@@ -1383,8 +1395,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         return moveList;
     }
-
-
     public void bestmove(View view) {
         Move mo=player.eseguiMossa(board.legalMoves());
         List<Integer> coordinate_from=parseMove(mo.getFrom());
