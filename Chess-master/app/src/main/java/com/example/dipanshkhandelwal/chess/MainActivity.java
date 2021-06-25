@@ -938,6 +938,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
 
                             game_over.setVisibility(View.VISIBLE);
+                            Intent intent = getIntent();
+                            finish();
+                            startActivity(intent);
                         }
 
                     /*
@@ -974,6 +977,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
                             //System.out.println("scacco matto or Draw or stallo");
                             game_over.setVisibility(View.VISIBLE);
+                            Intent intent = getIntent();
+                            finish();
+                            startActivity(intent);
                         }
                         clearDuble();
                     }else {
@@ -988,6 +994,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
                 //System.out.println("scacco matto or Draw or stallo");
                 game_over.setVisibility(View.VISIBLE);
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
             }
         }
 
@@ -1374,7 +1383,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void settings(View view) {
         LinearLayout settingsMenu = (LinearLayout) findViewById(R.id.settingsMenu);
-        settingsMenu.setVisibility(View.VISIBLE);
+        if (settingsMenu.getVisibility() != View.VISIBLE){
+            settingsMenu.setVisibility(View.VISIBLE);
+        }else {
+            settingsMenu.setVisibility(View.INVISIBLE);
+        }
+
     }
 
     public void cast(View view) {
