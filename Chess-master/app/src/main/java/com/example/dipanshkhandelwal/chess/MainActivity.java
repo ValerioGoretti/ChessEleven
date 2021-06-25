@@ -1373,6 +1373,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void settings(View view) {
-        System.out.println("settings");
+        LinearLayout settingsMenu = (LinearLayout) findViewById(R.id.settingsMenu);
+        settingsMenu.setVisibility(View.VISIBLE);
+    }
+
+    public void cast(View view) {
+        System.out.println("cast");
+    }
+
+    public void restart(View view) {
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 }

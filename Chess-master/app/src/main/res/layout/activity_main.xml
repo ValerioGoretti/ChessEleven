@@ -73,7 +73,9 @@
         app:layout_constraintStart_toEndOf="@+id/opponent"
         app:layout_constraintTop_toTopOf="@+id/imageView2"
         app:layout_constraintVertical_bias="0"
-        android:layout_marginTop="40dp"></Button>
+        android:layout_marginTop="40dp"
+        android:onClick="cast"
+        tools:ignore="OnClick"></Button>
     <Button
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -103,6 +105,35 @@
         android:onClick="bestmove"
         tools:ignore="OnClick"></Button>
 
+    <LinearLayout
+        android:id="@+id/settingsMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#dc181818"
+        android:orientation="vertical"
+        android:padding="45sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="parent"
+        android:translationZ="1dp"
+        android:visibility="gone"
+        >
+
+        <TextView
+            android:id="@+id/pawn_queen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5sp"
+            android:background="#ffffff"
+            android:elevation="6dp"
+            android:padding="1sp"
+            android:text="Restart"
+            android:textAlignment="center"
+            android:textSize="40sp"
+            android:onClick="restart"/>
+    </LinearLayout>
 
     <ImageView
         android:layout_width="wrap_content"
