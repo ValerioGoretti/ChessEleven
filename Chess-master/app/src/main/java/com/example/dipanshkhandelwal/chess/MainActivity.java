@@ -1435,4 +1435,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         finish();
 
     }
+
+    public void Back(View view) {
+        settingsMenu.setVisibility(View.GONE);
+        currentTask=0;
+        currentStep=0;
+        returnedText.setText(suggestions.getFirstMessage());
+        imlistenig.setVisibility(View.GONE);
+    }
 }
