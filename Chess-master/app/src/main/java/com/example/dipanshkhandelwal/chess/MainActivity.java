@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tt = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
-                    tt.setLanguage(Locale.ITALIAN);
+                    tt.setLanguage(Locale.ENGLISH);
                     tt.setSpeechRate((float)1);
             }
         });
@@ -267,6 +267,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             returnedText.setText(result);
                             found=true;
                             currentTask=2;
+                            speak("What kind of help do you want?");
                         }
                         else if(result.equals("screen")){
                             startActivity(new Intent("android.settings.CAST_SETTINGS"));
@@ -278,6 +279,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             returnedText.setText("What command do you want to do?\n\n'Ricomincia la partita'\n'Esci dall'applicazione'\n\n'indietro'");
                             settingsMenu.setVisibility(View.VISIBLE);
                             imlistenig.setVisibility(View.VISIBLE);
+                            speak(result);
 
                         }
                         else if (!found){
@@ -302,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
             else{
-                if(text.toLowerCase().contains("indietro")&&(currentTask!=3)){returnedText.setText(" ");currentTask=0;imlistenig.setVisibility(View.GONE);returnedText.setText(suggestions.getFirstMessage());}
+                if(text.toLowerCase().contains("indietro")&&(currentTask!=3)){returnedText.setText(" ");currentTask=0;imlistenig.setVisibility(View.GONE);returnedText.setText(suggestions.getFirstMessage());errorSound.start();}
                 if(currentTask==10){
                        String promozione=text.toLowerCase();
                        View v=null;
@@ -343,6 +345,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             currentTask=0;
                             returnedText.setText(suggestions.getFirstMessage());
                             imlistenig.setVisibility(View.GONE);
+                            errorSound.start();
                         }
                     }
                 }
@@ -398,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             View to=findViewById(getResources().getIdentifier(coordinate_t,"id", getBaseContext().getPackageName()));
                             onClick(to);
                             doneSound.start();
-                            returnedText.setText("Executed best possible move!");
+                            returnedText.setText("Best possible move executed!");
                             new CountDownTimer(3000,1000){
                                 @Override
                                 public void onTick(long l) {
@@ -431,6 +434,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         currentStep=0;
                         returnedText.setText(suggestions.getFirstMessage());
                         imlistenig.setVisibility(View.GONE);
+                        errorSound.start();
                     }
                 }
             }
