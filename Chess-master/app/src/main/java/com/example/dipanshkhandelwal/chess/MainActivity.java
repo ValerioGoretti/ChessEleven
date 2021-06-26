@@ -1011,7 +1011,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     ------------------------------------------------
                     COMPUTER -> GIOCATORE AVVERSARIO
                     ------------------------------------------------
-                    NOTE: try and catch per lo sleep
+
 
                      */
 
@@ -1030,6 +1030,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     colorRedking(parseBoard());
                                 }
                                 ismyturn=true;
+                                currentTask=0;
+                                currentStep=0;
+                                returnedText.setText(suggestions.getFirstMessage());
+                                imlistenig.setVisibility(View.GONE);
                             }
                         }.start();
                     /*
@@ -1089,6 +1093,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         board.doMove(new Move(c1,c2,lastChoice));
         clearBoardColor();
         moveBoard(parseBoard());
+        currentTask=0;
+        currentStep=0;
+        returnedText.setText(suggestions.getFirstMessage());
+        imlistenig.setVisibility(View.GONE);
         /*
          ------------------------------------------------
          COMPUTER -> GIOCATORE AVVERSARIO
@@ -1111,6 +1119,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onFinish() {
                 moveBoard(parseBoard());
                 ismyturn=true;
+                currentTask=0;
+                currentStep=0;
+                returnedText.setText(suggestions.getFirstMessage());
+                imlistenig.setVisibility(View.GONE);
             }
         }.start();
          /*
