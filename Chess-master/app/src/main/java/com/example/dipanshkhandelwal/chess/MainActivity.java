@@ -528,6 +528,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.R57:
                 click = Square.F8;
+                break;
             case R.id.R67:
                 click = Square.G8;
                 break;
@@ -986,6 +987,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ret.add(Y.get(row));
         return ret;
     }
+
     /**
      * giving s cell return all moves
      */
@@ -998,6 +1000,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         return moveList;
     }
+
+
     public void bestmove(View view) {
         Move mo=player.eseguiMossa(board.legalMoves());
         List<Integer> coordinate_from=parseMove(mo.getFrom());
