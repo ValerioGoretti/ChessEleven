@@ -35,7 +35,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, RecognitionListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     public Square c1=null;
     public Square c2=null;
     public Square click = null;
@@ -46,48 +46,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public LinearLayout pawn_choices;
     public Board board;
     private Piece lastChoice=null;
-    private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
     private TextView returnedText;
-    private SpeechRecognizer speech = null;
-    private Intent recognizerIntent;
-    private String LOG_TAG = "VoiceRecognitionActivity";
-    private boolean isTriggered=false;
-    private CountDownTimer timer;
-    private MediaPlayer listeningSound;
-    private MediaPlayer doneSound;
-    private MediaPlayer errorSound;
-    private TextToCommand textToCommand=new TextToCommand();
-    private int currentTask=0;
-    private int currentStep=0;
-    private Move proposedMove;
-    private ImageView imlistenig;
     private Suggestions suggestions=new Suggestions();
     private Player player= new Player();
     private boolean ismyturn=true;
     private LinearLayout settingsMenu ;
-    private TextToSpeech tt;
 
 
 
 
-    private void resetSpeechRecognizer() {
-        if(speech != null)
-            speech.destroy();
-        speech = SpeechRecognizer.createSpeechRecognizer(this);
-        Log.i(LOG_TAG, "isRecognitionAvailable: " + SpeechRecognizer.isRecognitionAvailable(this));
-        if(SpeechRecognizer.isRecognitionAvailable(this))
-            speech.setRecognitionListener(this);
-        else
-            finish();
-    }
-    private void setRecogniserIntent() {
-        recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
-                "it");
-        recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
-    }
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,415 +67,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         setContentView(R.layout.activity_main);
         initializeBoard();
-        imlistenig=(ImageView) findViewById(R.id.imlistening);
-        listeningSound=MediaPlayer.create(this,R.raw.listening);
-        doneSound=MediaPlayer.create(this,R.raw.done);
-        errorSound=MediaPlayer.create(this,R.raw.error);
+
         game_over = (TextView) findViewById(R.id.game_over);
         pawn_choices = (LinearLayout) findViewById(R.id.pawn_chioces);
         game_over.setVisibility(View.INVISIBLE);
         pawn_choices.setVisibility(View.INVISIBLE);
         settingsMenu=(LinearLayout) findViewById(R.id.settingsMenu);
         returnedText =(TextView) findViewById(R.id.textAssistent);
-        resetSpeechRecognizer();
-        timer=new CountDownTimer(10000, 1000) {
-            @Override
-            public void onTick(long l) {
-                if (isTriggered==false){cancel();}
-            }
-            @Override
-            public void onFinish() {
-
-                if(isTriggered){errorSound.start();}
-                isTriggered=false;
-                if(currentTask==0){
-                    errorSound.start();
-                    returnedText.setText("I didn't understand the first command! Please try again");
-                    new CountDownTimer(3000,1000){
-                        @Override
-                        public void onTick(long l) {
-
-                        }
-                        @Override
-                        public void onFinish() {
-                            returnedText.setText(suggestions.getFirstMessage());
-                            imlistenig.setVisibility(View.INVISIBLE);
-                        }
-                    }.start();
-                }
-
-            }
-        };
-        int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
-            return;
-        }
-        setRecogniserIntent();
-        speech.startListening(recognizerIntent);
-
-        tt = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                    tt.setLanguage(Locale.ENGLISH);
-                    tt.setSpeechRate((float)1);
-            }
-        });
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions, @NonNull  int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSIONS_REQUEST_RECORD_AUDIO) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                speech.startListening(recognizerIntent);
-            } else {
-                Toast.makeText(MainActivity.this, "Permission Denied!", Toast
-                        .LENGTH_SHORT).show();
-                finish();
-            }
-        }
-    }
-
-    @Override
-    public void onResume() {
-        Log.i(LOG_TAG, "resume");
-        super.onResume();
-        resetSpeechRecognizer();
-        speech.startListening(recognizerIntent);
-    }
-    @Override
-    protected void onPause() {
-        Log.i(LOG_TAG, "pause");
-        super.onPause();
-        speech.stopListening();
-    }
-    @Override
-    protected void onStop() {
-        Log.i(LOG_TAG, "stop");
-        super.onStop();
-        if (speech != null) {
-            speech.destroy();
-        }
-    }
-    @Override
-    public void onBeginningOfSpeech() {
-        Log.i(LOG_TAG, "onBeginningOfSpeech");
 
     }
-    @Override
-    public void onBufferReceived(byte[] buffer) {
-        Log.i(LOG_TAG, "onBufferReceived: " + buffer);
-    }
-    @Override
-    public void onEndOfSpeech() {
-        Log.i(LOG_TAG, "onEndOfSpeech");
-        speech.stopListening();
-    }
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    public void onResults(Bundle results) {
-        Log.i(LOG_TAG, "onResults");
-        ArrayList<String> matches = results
-                .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-        HashSet<String> res=new HashSet(matches);
-        String text = "";
-        if (matches!=null) {
-            for(String t:matches){
-                text+=t+" ";
-            }
-            if(currentTask==0){
-                if (res.contains("assistente") || res.contains("Assistente")) {
-                    if (!isTriggered) {
-                        isTriggered = true;
-                        timer.start();
-                        listeningSound.start();
-                        imlistenig.setVisibility(View.VISIBLE);
-
-                    }
-                } else {
-                    if (isTriggered) {
-                        String result=textToCommand.getTriggerCommand(text.toLowerCase());
-                        isTriggered = false;
-                        Boolean found=false;
-                        if (result.equals("What move do you want to do?")){
-                            found=true;
-                        String mossa = textToCommand.getMove(text.toLowerCase());
-                         if (!mossa.equals("I didn't understand the move")) {
-                            Move m = searchMove(mossa);
-                            isTriggered=false;
-
-                            if (m == null) {
-                                returnedText.setText("Uncorrect move! Try again");
-                                errorSound.start();
-                                new CountDownTimer(3000, 1000) {
-                                    @Override
-                                    public void onTick(long l) {
-                                    }
-                                    @Override
-                                    public void onFinish() {
-                                        returnedText.setText(suggestions.getFirstMessage());
-                                        imlistenig.setVisibility(View.GONE);
-
-                                    }
-                                }.start();
-                            } else {
-                                System.out.println("Correct Move! " + m.toString());
-                                System.out.println("Piece moved  " + board.getPiece(m.getFrom()));
-                                proposedMove = m;
-                                String sentence= "Do you confirm the move:" + board.getPiece(m.getFrom()).toString().toLowerCase().replace("_", " ") + " from " + m.getFrom() + " to " + m.getTo() + "?";
-                                speak(sentence);
-                                returnedText.setText("Do you confirm the move:\n" + board.getPiece(m.getFrom()).toString().toLowerCase().replace("_", " ") + " from " + m.getFrom() + " to " + m.getTo() + "?\n\n'si'\n\n'no'");
-                                currentTask = 1;
-                                currentStep = 2;
-                            }
-                        }}
-
-
-                        else if(result.equals("What kind of help do you want?\n\n'Dimmi le mosse per il pedone in c2'\n\n'Esegui la miglior mossa possibile'\n\n'indietro'")){
-                            returnedText.setText(result);
-                            found=true;
-                            currentTask=2;
-                            speak("What kind of help do you want?");
-                        }
-                        else if(result.equals("screen")){
-                            startActivity(new Intent("android.settings.CAST_SETTINGS"));
-                            found=true;
-                        }
-                        else if(result.equals("What command do you want to do?")){
-                            currentTask=3;
-                            found=true;
-                            returnedText.setText("What command do you want to do?\n\n'Ricomincia la partita'\n'Esci dall'applicazione'\n\n'indietro'");
-                            settingsMenu.setVisibility(View.VISIBLE);
-                            imlistenig.setVisibility(View.VISIBLE);
-                            speak(result);
-
-                        }
-                        else if (!found){
-
-                            isTriggered=false;
-                            returnedText.setText("I didn't understand the first command! Please try again");
-                            errorSound.start();
-                            new CountDownTimer(3000,1000){
-                                @Override
-                                public void onTick(long l) {
-
-                                }
-                                @Override
-                                public void onFinish() {
-                                    returnedText.setText(suggestions.getFirstMessage());
-                                    imlistenig.setVisibility(View.INVISIBLE);
-                                }
-                            }.start();
-                        }
-                    }
-                }
-
-            }
-            else{
-                if(text.toLowerCase().contains("indietro")&&(currentTask!=3)){returnedText.setText(" ");currentTask=0;imlistenig.setVisibility(View.GONE);returnedText.setText(suggestions.getFirstMessage());errorSound.start();}
-                if(currentTask==10){
-                       String promozione=text.toLowerCase();
-                       View v=null;
-                           if (promozione.contains("regina")){v = findViewById(getResources().getIdentifier("pawn_queen","id", getBaseContext().getPackageName()));
-                                         }
-                          else if(promozione.contains("torre")){  v = findViewById(getResources().getIdentifier("pawn_rock","id", getBaseContext().getPackageName()));
-                                          }
-                          else if(promozione.contains("cavallo")){ v =findViewById(getResources().getIdentifier("pawn_knight","id", getBaseContext().getPackageName()));
-                                        }
-                          else if(promozione.contains("alfiere")) {
-                               v = findViewById(getResources().getIdentifier("pawn_bishop", "id", getBaseContext().getPackageName()));
-                           }
-                       if (v==null){returnedText.setText("\n Please chose among:\n'Regina'\n'Alfiere'\n'Torre'\n'Cavallo'\n");errorSound.start();}
-                       else{returnedText.setText(suggestions.getFirstMessage());currentTask=0;currentStep=0;pawnChoice(v);proposedMove=null;imlistenig.setVisibility(View.GONE);imlistenig.setVisibility(View.INVISIBLE);doneSound.start();}
-                }
-                if (currentTask==1){
-                    if (currentStep==2 && proposedMove!=null){
-                        System.out.println(text.toLowerCase());
-                        if(text.toLowerCase().contains("sì")){
-                            currentTask=0;
-                            currentStep=0;
-                            System.out.println("Task 1. ");
-                            returnedText.setText(suggestions.getFirstMessage());
-                            List<Integer> coordinate_from=parseMove(proposedMove.getFrom());
-                            String coordinate_f="R"+coordinate_from.get(0) +""+coordinate_from.get(1);
-                            View from=findViewById(getResources().getIdentifier(coordinate_f,"id", getBaseContext().getPackageName()));
-                            onClick(from);
-                            List<Integer> coordinate_to=parseMove(proposedMove.getTo());
-                            String coordinate_t="R"+coordinate_to.get(0) +""+coordinate_to.get(1);
-                            View to=findViewById(getResources().getIdentifier(coordinate_t,"id", getBaseContext().getPackageName()));
-                            onClick(to);
-                            proposedMove=null;
-                            imlistenig.setVisibility(View.GONE);
-                            doneSound.start();
-                        }
-                        if(text.toLowerCase().contains("no")){
-                            currentStep=0;
-                            currentTask=0;
-                            returnedText.setText(suggestions.getFirstMessage());
-                            imlistenig.setVisibility(View.GONE);
-                            errorSound.start();
-                        }
-                    }
-                }
-                if (currentTask==2){
-                    if (currentStep==0){
-                        String cell = textToCommand.getCell(text.toLowerCase());
-                        if (!cell.equals("I didn't understand")){
-                            Square s=Square.fromValue(cell.toUpperCase().replaceAll("\\s",""));
-                            if(cellMoves(s).size()!=0){
-                                clearDuble();
-                                clearBoardColor();
-                                Piece piece=board.getPiece(s);
-                                returnedText.setText("Here the possible moves for the "+piece.toString().replace("_"," ")+" in "+cell.toUpperCase());
-                                List<Integer> coordinate=parseMove(s);
-                                String click="R"+coordinate.get(0)+""+coordinate.get(1);
-                                View viewCella=findViewById(getResources().getIdentifier(click,"id",getBaseContext().getPackageName()));
-                                onClick(viewCella);
-                                doneSound.start();
-                                new CountDownTimer(3000,1000){
-                                    @Override
-                                    public void onTick(long l) {
-
-                                    }
-                                    @Override
-                                    public void onFinish() {
-                                        returnedText.setText(suggestions.getFirstMessage());
-                                        imlistenig.setVisibility(View.INVISIBLE);
-                                        currentTask=0;
-                                        currentStep=0;
-                                    }
-                                }.start();
-
-                            }
-                            else{
-                                returnedText.setText("No moves for the cell "+cell.toUpperCase());
-                                errorSound.start();
-
-                            }
-
-
-                        }
-
-
-                        else if(textToCommand.isInBestMoves(text.toLowerCase()))
-                        {
-                            Move mo = player.eseguiMossa(board.legalMoves());
-                            List<Integer> coordinate_from=parseMove(mo.getFrom());
-                            String coordinate_f="R"+coordinate_from.get(0) +""+coordinate_from.get(1);
-                            View from=findViewById(getResources().getIdentifier(coordinate_f,"id", getBaseContext().getPackageName()));
-                            onClick(from);
-                            List<Integer> coordinate_to=parseMove(mo.getTo());
-                            String coordinate_t="R"+coordinate_to.get(0) +""+coordinate_to.get(1);
-                            View to=findViewById(getResources().getIdentifier(coordinate_t,"id", getBaseContext().getPackageName()));
-                            onClick(to);
-                            doneSound.start();
-                            returnedText.setText("Best possible move executed!");
-                            new CountDownTimer(3000,1000){
-                                @Override
-                                public void onTick(long l) {
-
-                                }
-                                @Override
-                                public void onFinish() {
-                                    returnedText.setText(suggestions.getFirstMessage());
-                                    imlistenig.setVisibility(View.INVISIBLE);
-                                    currentTask=0;
-                                    currentStep=0;
-                                }
-                            }.start();
-                        }
-
-                    }
-                }
-                if(currentTask==3){
-                    if(textToCommand.isFinish(text.toLowerCase())){
-                        finish();
-                    }
-                    else if (textToCommand.isRestart(text.toLowerCase())){
-                        Intent intent = getIntent();
-                        finish();
-                        startActivity(intent);
-                    }
-                    else if(text.toLowerCase().contains("indietro")){
-                        settingsMenu.setVisibility(View.GONE);
-                        currentTask=0;
-                        currentStep=0;
-                        returnedText.setText(suggestions.getFirstMessage());
-                        imlistenig.setVisibility(View.GONE);
-                        errorSound.start();
-                    }
-                }
-            }
-        }
-        speech.startListening(recognizerIntent);
-    }
-
-    @Override
-    public void onError(int errorCode) {
-        String errorMessage = getErrorText(errorCode);
-        Log.i(LOG_TAG, "FAILED " + errorMessage);
-        System.out.println("FAILED "+errorMessage);
-        // rest voice recogniser
-        resetSpeechRecognizer();
-        speech.startListening(recognizerIntent);
-    }
-
-    @Override
-    public void onEvent(int arg0, Bundle arg1) {
-        Log.i(LOG_TAG, "onEvent");
-    }
-
-    @Override
-    public void onPartialResults(Bundle arg0) {
-        Log.i(LOG_TAG, "onPartialResults");
-    }
-    @Override
-    public void onReadyForSpeech(Bundle arg0) {
-        Log.i(LOG_TAG, "onReadyForSpeech");
-    }
-    @Override
-    public void onRmsChanged(float rmsdB) {
-        //Log.i(LOG_TAG, "onRmsChanged: " + rmsdB);
-    }
-    public String getErrorText(int errorCode) {
-        String message;
-        switch (errorCode) {
-            case SpeechRecognizer.ERROR_AUDIO:
-                message = "Audio recording error";
-                break;
-            case SpeechRecognizer.ERROR_CLIENT:
-                message = "Client side error";
-                break;
-            case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
-                message = "Insufficient permissions";
-                break;
-            case SpeechRecognizer.ERROR_NETWORK:
-                message = "Network error";
-                break;
-            case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
-                message = "Network timeout";
-                break;
-            case SpeechRecognizer.ERROR_NO_MATCH:
-                message = "No match";
-                break;
-            case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
-                message = "RecognitionService busy";
-                break;
-            case SpeechRecognizer.ERROR_SERVER:
-                message = "error from server";
-                break;
-            case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
-                message = "No speech input";
-                break;
-            default:
-                message = "Didn't understand, please try again.";
-                break;
-        }
-        return message;
-    }
-
 
 
     private void initializeBoard() {
@@ -980,15 +550,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Move mo=new Move(c1,c2);
                     if(isaMove(mo)){
                         if(board.getPiece(mo.getFrom())== Piece.WHITE_PAWN && (mo.getTo()==Square.A8 || mo.getTo()==Square.B8 || mo.getTo()==Square.C8 || mo.getTo()==Square.D8 || mo.getTo()==Square.E8 || mo.getTo()==Square.F8 || mo.getTo()==Square.G8 || mo.getTo()==Square.H8)){
-                            currentTask=10;
                             pawn_choices.setVisibility(View.VISIBLE);
-                            imlistenig.setVisibility(View.VISIBLE);
                             return;
                         }else {
                             if(board.getPiece(mo.getFrom())== Piece.BLACK_PAWN && (mo.getTo()==Square.A1 || mo.getTo()==Square.B1 || mo.getTo()==Square.C1 || mo.getTo()==Square.D1 || mo.getTo()==Square.E1 || mo.getTo()==Square.F1 || mo.getTo()==Square.G1 || mo.getTo()==Square.H1)){
                                 pawn_choices.setVisibility(View.VISIBLE);
-                                imlistenig.setVisibility(View.VISIBLE);
-                                currentTask=10;
                                 return;
                             }
                         }
@@ -1030,10 +596,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     colorRedking(parseBoard());
                                 }
                                 ismyturn=true;
-                                currentTask=0;
-                                currentStep=0;
                                 returnedText.setText(suggestions.getFirstMessage());
-                                imlistenig.setVisibility(View.GONE);
                             }
                         }.start();
                     /*
@@ -1076,7 +639,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void pawnChoice (View view){
         pawn_choices.setVisibility(View.INVISIBLE);
-        imlistenig.setVisibility(View.INVISIBLE);
         returnedText.setText("Please chose among:\n'Regina'\n'Alfiere'\n'Torre'\n'Cavallo'");
         TextView t= (TextView) view;
         switch (t.getText().toString()){
@@ -1093,10 +655,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         board.doMove(new Move(c1,c2,lastChoice));
         clearBoardColor();
         moveBoard(parseBoard());
-        currentTask=0;
-        currentStep=0;
         returnedText.setText(suggestions.getFirstMessage());
-        imlistenig.setVisibility(View.GONE);
         /*
          ------------------------------------------------
          COMPUTER -> GIOCATORE AVVERSARIO
@@ -1119,10 +678,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onFinish() {
                 moveBoard(parseBoard());
                 ismyturn=true;
-                currentTask=0;
-                currentStep=0;
                 returnedText.setText(suggestions.getFirstMessage());
-                imlistenig.setVisibility(View.GONE);
             }
         }.start();
          /*
@@ -1459,10 +1015,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             settingsMenu.setVisibility(View.VISIBLE);
         }else {
             settingsMenu.setVisibility(View.GONE);
-            currentTask=0;
-            currentStep=0;
             returnedText.setText(suggestions.getFirstMessage());
-            imlistenig.setVisibility(View.GONE);
         }
 
     }
@@ -1483,16 +1036,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         finish();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public void speak(String sentence){
-        tt.speak(sentence, TextToSpeech.QUEUE_FLUSH,null,null);
-    }
-
     public void Back(View view) {
         settingsMenu.setVisibility(View.GONE);
-        currentTask=0;
-        currentStep=0;
         returnedText.setText(suggestions.getFirstMessage());
-        imlistenig.setVisibility(View.GONE);
     }
 }
