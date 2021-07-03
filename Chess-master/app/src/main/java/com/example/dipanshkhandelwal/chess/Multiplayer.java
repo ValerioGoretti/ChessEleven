@@ -1,15 +1,13 @@
 package com.example.dipanshkhandelwal.chess;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
-import android.os.CountDownTimer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.bhlangonijr.chesslib.Board;
 import com.github.bhlangonijr.chesslib.Piece;
@@ -22,10 +20,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import androidx.appcompat.app.AppCompatActivity;
 
+public class Multiplayer extends AppCompatActivity  implements View.OnClickListener{
 
-
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     public Square c1=null;
     public Square c2=null;
     public Square click = null;
@@ -40,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Suggestions suggestions=new Suggestions();
     private Player player= new Player();
     private boolean ismyturn=true;
-    private LinearLayout settingsMenu ;
+    private LinearLayout settingsMenu;
 
 
     @Override
@@ -49,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (Build.VERSION.SDK_INT >= 21) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_multiplayer);
         initializeBoard();
 
         game_over = (TextView) findViewById(R.id.game_over);
@@ -524,7 +522,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         ArrayList<Move> allowMoves = new ArrayList<>();
 
-        if(ismyturn){
+        //if(ismyturn){
             if (c1==null) {
                 c1=click;
                 colorMove(c1);
@@ -558,38 +556,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             startActivity(intent);
                         }
 
-                    /*
-                    ------------------------------------------------
-                    COMPUTER -> GIOCATORE AVVERSARIO
-                    ------------------------------------------------
-
-
-                     */
-
-                        board.doMove(player.eseguiMossa(board.legalMoves()));
-                        ismyturn=false;
-                        CountDownTimer timer=new CountDownTimer(2000,1000) {
-                            public void onTick(long millisUntilFinished) {
-
-                            }
-
-                            @Override
-                            public void onFinish() {
-                                moveBoard(parseBoard());
-                                clearBoardColor();
-                                if (board.isKingAttacked()){
-                                    colorRedking(parseBoard());
-                                }
-                                ismyturn=true;
-                                returnedText.setText(suggestions.getFirstMessage());
-                            }
-                        }.start();
-                    /*
-                    ---------------------FINE-----------------------
-                    COMPUTER -> GIOCATORE AVVERSARIO
-                    ------------------------------------------------
-                     */
-
                         if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
                             //System.out.println("scacco matto or Draw or stallo");
                             game_over.setVisibility(View.VISIBLE);
@@ -614,7 +580,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 finish();
                 startActivity(intent);
             }
-        }
+        //}
 
 
 
@@ -628,50 +594,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         TextView t= (TextView) view;
         switch (t.getText().toString()){
             case "Queen":   lastChoice = (board.getSideToMove().equals(Side.WHITE)) ?  Piece.WHITE_QUEEN :  Piece.BLACK_QUEEN;
-                            break;
+                break;
             case "Bishop":   lastChoice = (board.getSideToMove().equals(Side.WHITE)) ?  Piece.WHITE_BISHOP :  Piece.BLACK_BISHOP;
-                            break;
+                break;
             case "Rock":   lastChoice = (board.getSideToMove().equals(Side.WHITE)) ?  Piece.WHITE_ROOK:  Piece.BLACK_ROOK;
-                            break;
+                break;
             case "Knight":   lastChoice = (board.getSideToMove().equals(Side.WHITE)) ?  Piece.WHITE_KNIGHT :  Piece.BLACK_KNIGHT;
-                            break;
+                break;
         }
 
         board.doMove(new Move(c1,c2,lastChoice));
         clearBoardColor();
         moveBoard(parseBoard());
         returnedText.setText(suggestions.getFirstMessage());
-        /*
-         ------------------------------------------------
-         COMPUTER -> GIOCATORE AVVERSARIO
-         ------------------------------------------------
-         NOTE: try and catch per lo sleep
-        */
 
-        board.doMove(player.eseguiMossa(board.legalMoves()));
-        CountDownTimer timer=new CountDownTimer(2000,1000) {
-
-            @Override
-            public void onTick(long millisUntilFinished) {
-                if (millisUntilFinished==2000){
-                    ismyturn=false;
-                }
-
-            }
-
-            @Override
-            public void onFinish() {
-                moveBoard(parseBoard());
-                ismyturn=true;
-                returnedText.setText(suggestions.getFirstMessage());
-            }
-        }.start();
-         /*
-         ---------------------FINE-----------------------
-         COMPUTER -> GIOCATORE AVVERSARIO
-         ------------------------------------------------
-         */
-        //System.out.println(board.toString());
         clearDuble();
     }
 
@@ -821,7 +757,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             put(7,0);
         }};
 
-       return Y.get(pos);
+        return Y.get(pos);
     }
 
 
@@ -834,20 +770,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @SuppressLint("ResourceAsColor")
     private void clearBoardColor(){
         List<TextView> dark= new LinkedList<TextView>(){{
-           add((TextView) findViewById(R.id.RO000));
-           add((TextView) findViewById(R.id.RO002));
-           add((TextView) findViewById(R.id.RO004));
-           add((TextView) findViewById(R.id.RO006));
+            add((TextView) findViewById(R.id.RO000));
+            add((TextView) findViewById(R.id.RO002));
+            add((TextView) findViewById(R.id.RO004));
+            add((TextView) findViewById(R.id.RO006));
 
-           add((TextView) findViewById(R.id.RO017));
-           add((TextView) findViewById(R.id.RO015));
-           add((TextView) findViewById(R.id.RO013));
-           add((TextView) findViewById(R.id.RO011));
+            add((TextView) findViewById(R.id.RO017));
+            add((TextView) findViewById(R.id.RO015));
+            add((TextView) findViewById(R.id.RO013));
+            add((TextView) findViewById(R.id.RO011));
 
-           add((TextView) findViewById(R.id.RO020));
-           add((TextView) findViewById(R.id.RO022));
-           add((TextView) findViewById(R.id.RO024));
-           add((TextView) findViewById(R.id.RO026));
+            add((TextView) findViewById(R.id.RO020));
+            add((TextView) findViewById(R.id.RO022));
+            add((TextView) findViewById(R.id.RO024));
+            add((TextView) findViewById(R.id.RO026));
 
             add((TextView) findViewById(R.id.RO037));
             add((TextView) findViewById(R.id.RO035));

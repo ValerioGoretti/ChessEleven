@@ -2,10 +2,15 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.dipanshkhandelwal.chess.MainActivity">
+    tools:context=".Multiplayer"
+    android:id="@+id/activity_multiplayer"
+    >
+
+
+
+
 
     <ImageView
         android:layout_width="150dp"
@@ -1639,7 +1644,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/imageView2"
+        app:layout_constraintStart_toStartOf="@+id/gridLayout2"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5">
 
@@ -2348,5 +2353,10 @@
         app:layout_constraintTop_toTopOf="parent"
         android:textSize="60sp"
         android:textColor="@color/colorPrimaryDark" />
+
+
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

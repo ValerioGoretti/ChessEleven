@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "656571657714",
+    "project_id": "chesseleven",
+    "storage_bucket": "chesseleven.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656571657714:android:72993f525b2f584647cf6b",
+        "android_client_info": {
+          "package_name": "com.example.dipanshkhandelwal.chess"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "656571657714-7ngsev8v4gui1hf2rpnov0kt9fa3rd5l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXSTCv3gDdXEqSHBdOc9QSPGN9FWiJyco"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "656571657714-7ngsev8v4gui1hf2rpnov0kt9fa3rd5l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
