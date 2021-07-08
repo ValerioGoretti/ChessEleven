@@ -1,5 +1,6 @@
 package com.example.dipanshkhandelwal.chess;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -49,18 +50,19 @@ public class LoginActivity extends AppCompatActivity {
                                 JSONObject jsonObject = new JSONObject(response);
                                 System.out.println(jsonObject.toString());
                                 if (jsonObject.get("success").equals("true")) {
-
                                     Toast.makeText(getApplicationContext(), "Logged In",
                                             Toast.LENGTH_LONG).show();
+                                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+                                    editor.putString("username", usname.getText().toString());
+                                    editor.apply();
+                                    Intent intent = new Intent(getBaseContext(), Home.class);
+                                    startActivity(intent);
                                 }
                                 else{
-
                                     Toast.makeText(getApplicationContext(), "Wrong username or password",
                                             Toast.LENGTH_LONG).show();
                                 }
-                                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
-                                //editor.putInt("currentSession", respo);
-                                // preferences.edit()}
+
                             }
                             catch (Exception e){System.out.println(e.toString());}
                         }

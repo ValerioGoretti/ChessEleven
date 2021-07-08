@@ -14,18 +14,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Multiplayer">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".Demo_welcome">
 
         </activity>
         <activity android:name=".MainActivity2" />
         <activity android:name=".Profile" />
-        <activity android:name=".Home" />
+        <activity android:name=".Home" >
+
+        </activity>
+
         <activity
             android:name=".SignUp"
             android:screenOrientation="portrait" />
@@ -34,7 +32,14 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Welcome"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+        </activity>
+
         <activity android:name=".MainActivity"></activity>
         <activity android:name=".FirstPage" />
 

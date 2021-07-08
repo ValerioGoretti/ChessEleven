@@ -50,7 +50,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
-                android:text=" Nerchia di ferro 98"
+                android:text="--"
+                android:id="@+id/profile_username"
                 android:textColor="#000000"
                 android:textSize="18dp"></TextView>
 
@@ -74,7 +75,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="81dp"
-                android:text=" Nerchia di ferro 98"
+                android:text="--"
+                android:id="@+id/profile_email"
                 android:textColor="#000000"
                 android:textSize="18dp"></TextView>
 
@@ -95,7 +97,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="69"
+                    android:text="--"
+                    android:id="@+id/profile_win"
                     android:textColor="#000000"
                     android:textSize="30dp"></TextView>
 
@@ -118,7 +121,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="69"
+                    android:text="--"
+                    android:id="@+id/profile_losses"
                     android:textColor="#000000"
                     android:textSize="30dp"></TextView>
 
@@ -141,8 +145,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="69"
+                    android:text="--"
                     android:textColor="#000000"
+                    android:id="@+id/profile_draws"
 
                     android:textSize="30dp"></TextView>
 
@@ -168,7 +173,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="150dp"
-                android:text="2000"
+                android:text="--"
+                android:id="@+id/profile_total"
                 android:textColor="#000"
                 android:textSize="40dp"></TextView>
 
