@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <application
         android:allowBackup="true"
         android:configChanges="orientation|keyboardHidden"
@@ -12,16 +13,12 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-<<<<<<< Updated upstream
         <activity android:name=".Multiplayer">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-=======
-        <activity android:name=".Demo_welcome">
->>>>>>> Stashed changes
         </activity>
         <activity android:name=".Demo_welcome">
 
@@ -37,19 +34,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Welcome"
-<<<<<<< Updated upstream
             android:screenOrientation="portrait" />
         <activity android:name=".MainActivity"></activity>
-=======
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".MainActivity">
-        </activity>
->>>>>>> Stashed changes
         <activity android:name=".FirstPage" />
 
     </application>
