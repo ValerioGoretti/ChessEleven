@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class Home extends AppCompatActivity {
+    private Button communityButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +28,16 @@ public class Home extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        communityButton=findViewById(R.id.buttonCommunity);
+        communityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), community_activity.class);
+                startActivity(intent);
+
+            }
+        });
+
 
     }
 }

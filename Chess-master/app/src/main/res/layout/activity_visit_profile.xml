@@ -8,20 +8,18 @@
     tools:context=".Profile">
 
     <TextView
-        android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="250dp"
-        android:text="Your Profile"
-        android:textColor="#000"
+        android:text="Player Profile"
         android:textSize="40dp"
+        android:layout_marginTop="250dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="#000"
+        android:id="@+id/textView8"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
     </TextView>
-
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,7 +35,8 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="350dp"
+        android:visibility="gone"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -178,7 +177,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginTop="40dp"
             android:orientation="vertical">
 
@@ -200,6 +199,29 @@
                 android:textSize="20dp"></TextView>
 
         </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        <Button
+            android:layout_width="300dp"
+            android:layout_height="35dp"
+            android:text="Follow"
+            android:id="@+id/followButton"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            android:textSize="20dp"
+            android:textColor="#fff"
+            android:background="@drawable/blue_button"
+            ></Button>
+
 
     </LinearLayout>
 
