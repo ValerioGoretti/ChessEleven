@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 public class Home extends AppCompatActivity {
     private Button communityButton;
+    private  Button multiButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,13 @@ public class Home extends AppCompatActivity {
                 Intent intent = new Intent(getBaseContext(), community_activity.class);
                 startActivity(intent);
 
+            }
+        });
+        multiButton=(Button) findViewById(R.id.button5);
+        multiButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getBaseContext(),Matchmaking.class));
             }
         });
 
