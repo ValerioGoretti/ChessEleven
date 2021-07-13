@@ -90,6 +90,7 @@ public class Matchmaking extends AppCompatActivity {
                     i.putExtra("color","W");
                     i.putExtra("game", gameId);
                     startActivity(i);
+                    finish();
                 }else {
                     for(DataSnapshot ds : snapshot.getChildren()) {
                         String gameCod = ds.getKey();
@@ -127,6 +128,7 @@ public class Matchmaking extends AppCompatActivity {
                     i.putExtra("color","B");
                 }
                 startActivity(i);
+                finish();
             }
 
 
