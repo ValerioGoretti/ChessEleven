@@ -60,22 +60,16 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
     private DatabaseReference ncheck;
     private DatabaseReference fen;
     private TextView col;
-
-
     //DONE: Vedere perchè da sempre true quando giochi con il bianco
     //DONE: Vedere su youtube come si refresha la scacchiera, in che punto leggere i dati dal db e aggiornare la scacchiera dell altra persona
-
     //TODO: AGGIORNARE NEL LISTNER NELL'ONCREATE ANCHE L'ENVIRONMENT            IDEA: METTERE UN CAMPO PER L'ULTIMA MOSSA COSì CHE LA AGGIORNA QUANDO LO VEDE (?)
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= 21) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
         setContentView(R.layout.activity_multiplayer);
-
         col=(TextView) findViewById(R.id.buttonColor);
         game_over = (TextView) findViewById(R.id.game_over);
         pawn_choices = (LinearLayout) findViewById(R.id.pawn_chioces);
@@ -83,16 +77,12 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
         pawn_choices.setVisibility(View.INVISIBLE);
         settingsMenu=(LinearLayout) findViewById(R.id.settingsMenu);
         returnedText =(TextView) findViewById(R.id.textAssistent);
-
         colorPiece= getIntent().getExtras().getString("color");
         gameId= getIntent().getExtras().getString("game");
-
         System.out.println("GAME ID NEL Create " + gameId);
-
         col.setText(colorPiece);
         Toast.makeText(getApplicationContext(), "il tuo colore è -> "+ colorPiece, Toast.LENGTH_LONG).show();
         Toast.makeText(getApplicationContext(), "id partita -> "+ gameId, Toast.LENGTH_LONG).show();
-
         DatabaseReference db = database.getReference("game/"+ gameId);
         db.child("board").addValueEventListener(new ValueEventListener() {
             @Override
@@ -103,7 +93,6 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
                 //TODO:  FARE IL TODO A RIGA 67 QUI -> board.loadFromFen(appTitle);
                 moveBoard(parseBoard(appTitle));
             }
-
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
