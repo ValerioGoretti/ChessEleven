@@ -101,7 +101,7 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
                 Log.e("Hey is changed ", appTitle);
                 System.out.println("Hey is changed "+ appTitle);
                 //TODO:  FARE IL TODO A RIGA 67 QUI -> board.loadFromFen(appTitle);
-                moveBoard(parseBoard(appTitle));
+                moveBoard(parseBoard(appTitle)); 
             }
 
             @Override
