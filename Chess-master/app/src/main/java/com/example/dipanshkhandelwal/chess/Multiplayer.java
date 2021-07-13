@@ -59,6 +59,9 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
     private DatabaseReference fen;
     private TextView col;
     private boolean blackOnline = false;
+
+    //TODO: GESTISCI FINE PARTITA,  DISCONNESSIONE AVVERSARIO CHE FINE PARTITA TOTALE
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
