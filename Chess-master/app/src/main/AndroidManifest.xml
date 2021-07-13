@@ -18,7 +18,6 @@
             android:name=".community_activity"
             android:windowSoftInputMode="adjustPan">
         </activity>
-        <activity android:name=".Multiplayer" />
         <activity android:name=".Demo_welcome" />
         <activity android:name=".MainActivity2" />
         <activity android:name=".Profile" />
@@ -32,14 +31,22 @@
         <activity
             android:name=".Welcome"
             android:screenOrientation="portrait">
+            
+        </activity>
+        <activity android:name=".MainActivity" />
+        <activity android:name=".FirstPage" />
+        <activity
+            android:name=".Multiplayer"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Matchmaking"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".FirstPage" />
     </application>
 
 </manifest>
