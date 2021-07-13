@@ -29,7 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class Multiplayer extends AppCompatActivity  implements View.OnClickListener{
@@ -52,7 +52,6 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
     private boolean out;
     private String gameId;
     private String colorPiece;
-
     private FirebaseDatabase database= FirebaseDatabase.getInstance();
     private DatabaseReference boardDb;
     //private DatabaseReference lastMoveDb;
@@ -60,13 +59,7 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
     private DatabaseReference ncheck;
     private DatabaseReference fen;
     private TextView col;
-
-
-    //DONE: Vedere perchè da sempre true quando giochi con il bianco
-    //DONE: Vedere su youtube come si refresha la scacchiera, in che punto leggere i dati dal db e aggiornare la scacchiera dell altra persona
-
-    //TODO: AGGIORNARE NEL LISTNER NELL'ONCREATE ANCHE L'ENVIRONMENT            IDEA: METTERE UN CAMPO PER L'ULTIMA MOSSA COSì CHE LA AGGIORNA QUANDO LO VEDE (?)
-
+    private boolean blackOnline = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -90,17 +83,17 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
         System.out.println("GAME ID NEL Create " + gameId);
 
         col.setText(colorPiece);
-        Toast.makeText(getApplicationContext(), "il tuo colore è -> "+ colorPiece, Toast.LENGTH_LONG).show();
-        Toast.makeText(getApplicationContext(), "id partita -> "+ gameId, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "il tuo colore è -> "+ colorPiece, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "id partita -> "+ gameId, Toast.LENGTH_LONG).show();
 
         DatabaseReference db = database.getReference("game/"+ gameId);
+
         db.child("board").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String appTitle = dataSnapshot.getValue().toString();
                 Log.e("Hey is changed ", appTitle);
                 System.out.println("Hey is changed "+ appTitle);
-                //TODO:  FARE IL TODO A RIGA 67 QUI -> board.loadFromFen(appTitle);
                 moveBoard(parseBoard(appTitle));
             }
 
@@ -124,8 +117,55 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
                 Log.e("Hey", "Failed to read app title value.", error.toException());
             }
         });
+
+        if (colorPiece.equals("W")) {
+            //inizializza tutto
+            DatabaseReference stateW = database.getReference("game/"+ gameId+"/stateW");
+            DatabaseReference stateB= database.getReference("game/"+ gameId+"/stateB");
+            stateW.setValue("true");
+            stateB.setValue("null");
+        }else {
+            //inizializza il tuo
+            DatabaseReference stateB= database.getReference("game/"+ gameId+"/stateB");
+            stateB.setValue("true");
+        }
+
+        DatabaseReference stateAv = database.getReference("game/"+ gameId);
+        stateAv.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot sn: snapshot.getChildren()) {
+                    if (sn.getKey().equals("state"+avversario(colorPiece))){
+                        String val=(String) sn.getValue();
+                        if (val.equals("false")){
+                            System.out.println("hai vinto");
+                            Toast.makeText(getApplicationContext(), "hai vinto", Toast.LENGTH_LONG).show();
+                        }
+                        if (sn.getKey().equals("stateB")){
+                            String value=(String) sn.getValue();
+                            if (value.equals("true")){
+                                blackOnline=true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+
+
+
+
         initializeBoard();
     }
+
+
 
 
     private void initializeBoard() {
@@ -392,8 +432,20 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
         //lastMoveDb.setValue("0");
         nMove.setValue(0);
         ncheck.setValue(0);
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
 
+        //DatabaseReference rRef = database.getReference("game");
+        //rRef.child(gameId).removeValue();
+        DatabaseReference wRef = database.getReference("WaitingRoom");
+        wRef.child(gameId).removeValue();
+        DatabaseReference state = database.getReference("game/"+ gameId+"/state"+colorPiece);
+        state.setValue("false");
+
+        finish();
     }
 
 
@@ -604,7 +656,7 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
 
         ArrayList<Move> allowMoves = new ArrayList<>();
 
-        if(ismyturn()){
+        if(ismyturn() && blackOnline){
             if (c1==null) {
                 c1=click;
                 colorMove(c1);
@@ -661,20 +713,10 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
                         if (board.isKingAttacked()){
                             colorRedking(parseBoard());
                         }
-                        if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
-
-                            game_over.setVisibility(View.VISIBLE);
-                            Intent intent = getIntent();
-                            finish();
-                            startActivity(intent);
-                        }
 
                         if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
-                            //System.out.println("scacco matto or Draw or stallo");
                             game_over.setVisibility(View.VISIBLE);
-                            Intent intent = getIntent();
                             finish();
-                            startActivity(intent);
                         }
                         clearDuble();
                     }else {
@@ -686,13 +728,7 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
                     }
                 }
             }
-            if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
-                //System.out.println("scacco matto or Draw or stallo");
-                game_over.setVisibility(View.VISIBLE);
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
-            }
+
         }
 
     }
@@ -753,6 +789,13 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
     }
 
 
+    public String avversario(String color){
+        switch (color){
+            case "W": return "B";
+            case "B": return "W";
+        }
+        return "true";
+    }
     public void pawnChoice (View view){
         pawn_choices.setVisibility(View.INVISIBLE);
         returnedText.setText("Please chose among:\n'Regina'\n'Alfiere'\n'Torre'\n'Cavallo'");
