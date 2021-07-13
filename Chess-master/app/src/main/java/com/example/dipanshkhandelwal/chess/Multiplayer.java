@@ -54,7 +54,6 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
     private String colorPiece;
     private FirebaseDatabase database= FirebaseDatabase.getInstance();
     private DatabaseReference boardDb;
-    //private DatabaseReference lastMoveDb;
     private DatabaseReference nMove;
     private DatabaseReference ncheck;
     private DatabaseReference fen;
