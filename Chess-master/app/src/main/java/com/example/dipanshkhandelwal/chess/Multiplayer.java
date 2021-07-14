@@ -88,12 +88,9 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String appTitle = dataSnapshot.getValue().toString();
-<<<<<<< Updated upstream
                 Log.e("Hey is changed ", appTitle);
                 System.out.println("Hey is changed "+ appTitle);
                 //TODO:  FARE IL TODO A RIGA 67 QUI -> board.loadFromFen(appTitle);
-=======
->>>>>>> Stashed changes
                 moveBoard(parseBoard(appTitle));
             }
             @Override
@@ -116,38 +113,6 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
                 Log.e("Hey", "Failed to read app title value.", error.toException());
             }
         });
-<<<<<<< Updated upstream
-=======
-
-
-
-        DatabaseReference stateAv = database.getReference("game/"+ gameId);
-        stateAv.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot sn: snapshot.getChildren()) {
-                    if (sn.getKey().equals("state"+avversario(colorPiece))){
-                        String val=(String) sn.getValue();
-                        if (val.equals("false")){
-                            System.out.println("hai vinto");
-                            Toast.makeText(getApplicationContext(), "hai vinto", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-
-
-
-
-
->>>>>>> Stashed changes
         initializeBoard();
     }
 
@@ -417,18 +382,6 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
         nMove.setValue(0);
         ncheck.setValue(0);
 
-<<<<<<< Updated upstream
-=======
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        //DatabaseReference rRef = database.getReference("game");
-        //rRef.child(gameId).removeValue();
-
-        DatabaseReference state = database.getReference("game/"+ gameId+"/state"+colorPiece);
-        state.setValue("false");
->>>>>>> Stashed changes
 
     }
 
@@ -640,13 +593,7 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
 
         ArrayList<Move> allowMoves = new ArrayList<>();
 
-<<<<<<< Updated upstream
         if(ismyturn()){
-=======
-        //blackOnline  NON FA WORKARE PIù IL ismyturn
-
-        if(ismyturn() ){
->>>>>>> Stashed changes
             if (c1==null) {
                 c1=click;
                 colorMove(c1);
