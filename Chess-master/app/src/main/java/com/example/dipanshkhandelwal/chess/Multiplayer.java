@@ -17,6 +17,8 @@ import com.github.bhlangonijr.chesslib.Side;
 import com.github.bhlangonijr.chesslib.Square;
 import com.github.bhlangonijr.chesslib.move.Move;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -54,15 +57,10 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
     private String colorPiece;
 
     private FirebaseDatabase database= FirebaseDatabase.getInstance();
-    private DatabaseReference boardDb;
-    //private DatabaseReference lastMoveDb;
-    private DatabaseReference nMove;
-    private DatabaseReference ncheck;
-    private DatabaseReference fen;
+
     private TextView col;
-    //DONE: Vedere perchè da sempre true quando giochi con il bianco
-    //DONE: Vedere su youtube come si refresha la scacchiera, in che punto leggere i dati dal db e aggiornare la scacchiera dell altra persona
-    //TODO: AGGIORNARE NEL LISTNER NELL'ONCREATE ANCHE L'ENVIRONMENT            IDEA: METTERE UN CAMPO PER L'ULTIMA MOSSA COSì CHE LA AGGIORNA QUANDO LO VEDE (?)
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,19 +81,17 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
         col.setText(colorPiece);
         Toast.makeText(getApplicationContext(), "il tuo colore è -> "+ colorPiece, Toast.LENGTH_LONG).show();
         Toast.makeText(getApplicationContext(), "id partita -> "+ gameId, Toast.LENGTH_LONG).show();
+
         DatabaseReference db = database.getReference("game/"+ gameId);
+
         db.child("board").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String appTitle = dataSnapshot.getValue().toString();
-                Log.e("Hey is changed ", appTitle);
-                System.out.println("Hey is changed "+ appTitle);
-                //TODO:  FARE IL TODO A RIGA 67 QUI -> board.loadFromFen(appTitle);
-                moveBoard(parseBoard(appTitle));
+                String bo = dataSnapshot.getValue().toString();
+                moveBoard(parseBoard(bo));
             }
             @Override
             public void onCancelled(DatabaseError error) {
-                // Failed to read value
                 Log.e("Hey", "Failed to read app title value.", error.toException());
             }
         });
@@ -103,8 +99,8 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
         db.child("fen").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String appTitle = dataSnapshot.getValue().toString();
-                board.loadFromFen(appTitle);
+                String fen = dataSnapshot.getValue().toString();
+                board.loadFromFen(fen);
             }
 
             @Override
@@ -113,6 +109,7 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
                 Log.e("Hey", "Failed to read app title value.", error.toException());
             }
         });
+
         initializeBoard();
     }
 
@@ -369,19 +366,13 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
             DisplayBoardBackgroundSelected[7][7] = (TextView) findViewById(R.id.RO077);
         }
 
-        System.out.println("GAME ID NEL INITIALIZE " + gameId);
-        boardDb= database.getReference("game/"+gameId+"/board");
-        fen= database.getReference("game/"+gameId+"/fen");
-        //lastMoveDb= database.getReference("game/"+gameId+"/last");
-        nMove= database.getReference("game/"+gameId+"/Nmove");
-        ncheck= database.getReference("game/"+gameId+"/Ncheck");
 
-        boardDb.setValue(board.toString());
-        fen.setValue(board.getFen());
-        //lastMoveDb.setValue("0");
-        nMove.setValue(0);
-        ncheck.setValue(0);
+        DatabaseReference db = database.getReference("game/"+ gameId);
 
+        db.child("board").setValue(board.toString());
+        db.child("fen").setValue(board.getFen());
+        db.child("Nmove").setValue(0);
+        db.child("Ncheck").setValue(0);
 
     }
 
@@ -514,7 +505,6 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
             case R.id.R74:
                 click = Square.H5;
                 break;
-
             case R.id.R05:
                 click = Square.A6;
                 break;
@@ -613,36 +603,24 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
                             }
                         }
                         board.doMove(mo);
-                        //INIZIO: INCREMENTO MOSSE
+                        //INIZIO: INCREMENTO MOSSE, board, fen
                         DatabaseReference db = database.getReference("game/"+ gameId);
-                        db.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                        db.child("Nmove").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                             @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                for (DataSnapshot sn: dataSnapshot.getChildren()) {
-                                    if(sn.getKey().equals("Nmove")){
-                                        DatabaseReference move = database.getReference("game/"+ gameId+"/Nmove");
-                                        Long s= (Long) sn.getValue();
-                                        move.setValue(s+1);
-                                    }
-                                    if(sn.getKey().equals("board")){
-                                        DatabaseReference bo = database.getReference("game/"+ gameId+"/board");
-                                        bo.setValue(board.toString());
-
-                                    }
-                                    if(sn.getKey().equals("fen")){
-                                        DatabaseReference bo = database.getReference("game/"+ gameId+"/fen");
-                                        bo.setValue(board.getFen());
-
-                                    }
+                            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                if (!task.isSuccessful()) {
+                                    Log.e("firebase", "Error getting data", task.getException());
+                                }
+                                else {
+                                    Long move= (Long) task.getResult().getValue();
+                                    db.child("Nmove").setValue(move+1);
+                                    db.child("board").setValue(board.toString());
+                                    db.child("fen").setValue(board.getFen());
                                 }
                             }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
                         });
-                        //FINE: INCREMENTO MOSSE
+                        //FINE: INCREMENTO MOSSE, board, fen
 
                         clearBoardColor();
                         moveBoard(parseBoard());
@@ -688,50 +666,50 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
 
     private boolean ismyturn() {
 
-        //INIZIO: INCREMENTO MOSSE
+        //INIZIO: INCREMENTO MOSSE, board, fen
         DatabaseReference db = database.getReference("game/"+ gameId);
-        db.addValueEventListener(new ValueEventListener() {
+
+
+        db.child("Nmove").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot sn: dataSnapshot.getChildren()) {
-                    if(sn.getKey().equals("Nmove")){
-                        long m = (long) sn.getValue();
-                        System.out.println("il numero di mosse fatte è "+ m);
-                        switch (colorPiece){
-                            case "W":
-                                if(m %2==0){
-                                    System.out.println("il giocatore è bianco ed è il suo turno");
-                                    out=true;
-                                }
-                                else {
-                                    System.out.println("il giocatore è bianco ed NON è il suo turno");
-                                    out= false;
-                                }
-                                break;
-                            case "B":
-                                if(m %2!=0){
-                                    System.out.println("il giocatore è nero ed è il suo turno");
-                                    out= true;
-                                }
-                                else{
-                                    System.out.println("il giocatore è nero ed NON è il suo turno");
-                                    out= false;
-                                }
-                                break;
-                            default:
-                                throw new IllegalStateException("Unexpected value: " + colorPiece);
-                        }
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+                    Long m= (Long) task.getResult().getValue();
+                    switch (colorPiece){
+                        case "W":
+                            if(m %2==0){
+                                System.out.println("il giocatore è bianco ed è il suo turno");
+                                out=true;
+                            }
+                            else {
+                                System.out.println("il giocatore è bianco ed NON è il suo turno");
+                                out= false;
+                            }
+                            break;
+
+                        case "B":
+                            if(m %2!=0){
+                                System.out.println("il giocatore è nero ed è il suo turno");
+                                out= true;
+                            }
+                            else{
+                                System.out.println("il giocatore è nero ed NON è il suo turno");
+                                out= false;
+                            }
+                            break;
+
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + colorPiece);
                     }
                 }
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
         });
-        System.out.println(out);
-        return  out;
+        //FINE: INCREMENTO MOSSE, board, fen
+
+        return out;
         //FINE: INCREMENTO MOSSE
         //return  true;
         /*
