@@ -25,6 +25,14 @@ public class EndGame extends AppCompatActivity {
     private TextView movesTV;
     private TextView playerW;
     private TextView playerB;
+
+    private String game;
+    private String winner;
+    private String player;
+    private String playerWh;
+    private String playerBl;
+    private String moves;
+    private String check;
     private FirebaseDatabase database= FirebaseDatabase.getInstance();
 
     @Override
@@ -38,9 +46,9 @@ public class EndGame extends AppCompatActivity {
         playerW = (TextView) findViewById(R.id.WPlayer);
         playerB = (TextView) findViewById(R.id.BPlayer);
 
-        String game= getIntent().getExtras().getString("game");
-        String winner= getIntent().getExtras().getString("winner");
-        String player= getIntent().getExtras().getString("player");
+        game= getIntent().getExtras().getString("game");
+        winner= getIntent().getExtras().getString("winner");
+        player= getIntent().getExtras().getString("player");
 
 
 
@@ -56,6 +64,7 @@ public class EndGame extends AppCompatActivity {
                 else {
                     String w= (String) task.getResult().getValue();
                     //Toast.makeText(getApplicationContext(), "w ->  "+ w, Toast.LENGTH_LONG).show();
+                    playerWh=w;
                     playerW.setText(w);
                 }
             }
@@ -69,6 +78,7 @@ public class EndGame extends AppCompatActivity {
                 else {
                     String b= (String) task.getResult().getValue();
                     //Toast.makeText(getApplicationContext(), "b ->  "+ b, Toast.LENGTH_LONG).show();
+                    playerBl=b;
                     playerB.setText(b);
                 }
             }
@@ -82,6 +92,7 @@ public class EndGame extends AppCompatActivity {
                 else {
                     String b= task.getResult().getValue().toString();
                     //Toast.makeText(getApplicationContext(), "b ->  "+ b, Toast.LENGTH_LONG).show();
+                    moves= b;
                     movesTV.setText("Number of moves "+b);
                 }
             }
@@ -98,6 +109,7 @@ public class EndGame extends AppCompatActivity {
                     if(b==0){
                         b+=1;
                     }
+                    check=Long.toString(b);
                     //Toast.makeText(getApplicationContext(), "b ->  "+ b, Toast.LENGTH_LONG).show();
                     checkTV.setText("Number of checks "+Long.toString(b));
                 }
@@ -108,6 +120,15 @@ public class EndGame extends AppCompatActivity {
         if (player.equals(winner)){
             resultTV.setText("You Win");
             resultTV.setTextColor(Color.parseColor("#adff2f"));
+
+            /*
+            SPAZIO PER INSERIRE LE PARTITE NEL DB
+            SOLO CHI VINCE SCRIVE SIL DB
+             */
+
+
+
+
         }else{
             resultTV.setText("You Lost");
             resultTV.setTextColor(Color.parseColor("#ff0000"));
