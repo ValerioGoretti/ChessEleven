@@ -19,7 +19,6 @@ import com.github.bhlangonijr.chesslib.move.Move;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,13 +26,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.EventListener;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class Multiplayer extends AppCompatActivity  implements View.OnClickListener{
@@ -48,19 +47,20 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
     public LinearLayout pawn_choices;
     public Board board;
     private Piece lastChoice=null;
+    private TextView returnedText;
     private Suggestions suggestions=new Suggestions();
     private Player player= new Player();
+    private boolean ismyturn=true;
     private LinearLayout settingsMenu;
+    private boolean out;
     private String gameId;
     private String colorPiece;
-    private Long move;
-    private Long check;
-    private FirebaseDatabase database= FirebaseDatabase.getInstance();
-    private TextView col;
-    private String stateAvv;
-    private boolean isFinished;
 
-    //TODO: far partire l'activity finale
+    private FirebaseDatabase database= FirebaseDatabase.getInstance();
+
+    private TextView col;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,17 +74,15 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
         game_over.setVisibility(View.INVISIBLE);
         pawn_choices.setVisibility(View.INVISIBLE);
         settingsMenu=(LinearLayout) findViewById(R.id.settingsMenu);
+        returnedText =(TextView) findViewById(R.id.textAssistent);
         colorPiece= getIntent().getExtras().getString("color");
         gameId= getIntent().getExtras().getString("game");
         System.out.println("GAME ID NEL Create " + gameId);
         col.setText(colorPiece);
-
         Toast.makeText(getApplicationContext(), "il tuo colore è -> "+ colorPiece, Toast.LENGTH_LONG).show();
         Toast.makeText(getApplicationContext(), "id partita -> "+ gameId, Toast.LENGTH_LONG).show();
 
         DatabaseReference db = database.getReference("game/"+ gameId);
-
-        initializeBoard();
 
         db.child("board").addValueEventListener(new ValueEventListener() {
             @Override
@@ -98,80 +96,11 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
             }
         });
 
-        db.child("Nmove").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                move= (Long) dataSnapshot.getValue();
-            }
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.e("Hey", "Failed to read app title value.", error.toException());
-            }
-        });
-
         db.child("fen").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String fen = dataSnapshot.getValue().toString();
                 board.loadFromFen(fen);
-                if (board.isKingAttacked()){
-                    colorRedking(parseBoard());
-                    //INIZIO: INCREMENTO MOSSE, board, fen
-                    DatabaseReference data = database.getReference("game/"+ gameId);
-
-                    data.child("Ncheck").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DataSnapshot> task) {
-                            if (!task.isSuccessful()) {
-                                Log.e("firebase", "Error getting data", task.getException());
-                            }
-                            else {
-                                Long Ncheck= (Long) task.getResult().getValue();
-                                data.child("Ncheck").setValue(Ncheck+1);
-                            }
-                        }
-                    });
-                    //FINE: INCREMENTO MOSSE, board, fen
-                }
-                if (board.isMated()){
-                    //MATTO
-                    db.child("end").setValue(avversario(colorPiece));
-                    if (!ismyturn()){
-                        Intent intent = new Intent(getBaseContext(), EndGame.class);
-                        intent.putExtra("winner", colorPiece);
-                        intent.putExtra("game", gameId );
-                        intent.putExtra("player", colorPiece);
-                        intent.putExtra("check", check);
-                        intent.putExtra("moves", move);
-                        isFinished=true;
-                        startActivity(intent);
-                        finish();
-                    }else {
-                        Intent intent = new Intent(getBaseContext(), EndGame.class);
-                        intent.putExtra("winner", avversario(colorPiece));
-                        intent.putExtra("player", colorPiece);
-                        intent.putExtra("moves", move);
-                        intent.putExtra("check", check);
-                        intent.putExtra("game", gameId );
-                        isFinished=true;
-                        startActivity(intent);
-                        finish();
-                    }
-
-                }else if(board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
-                    //patta
-                        db.child("end").setValue("X");
-                        Intent intent = new Intent(getBaseContext(), EndGame.class);
-                        intent.putExtra("winner", "X");
-                        intent.putExtra("player", colorPiece);
-                        intent.putExtra("moves", move);
-                        intent.putExtra("check", check);
-                        intent.putExtra("game", gameId );
-                        isFinished=true;
-                        startActivity(intent);
-                        finish();
-                }
-
             }
 
             @Override
@@ -181,78 +110,7 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
             }
         });
 
-
-
-        /*
-        db.child("end").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String end = (String) dataSnapshot.getValue();
-                String s=imWinner(end);
-
-                if (!end.equals("")){
-                    Intent intent = new Intent(getBaseContext(), EndGame.class);
-                    intent.putExtra("winner", s);
-                    intent.putExtra("game", gameId );
-
-                    startActivity(intent);
-                    finish();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.e("Hey", "Failed to read app title value.", error.toException());
-            }
-        });
-         */
-
-
-
-
-        DatabaseReference stateAv = database.getReference("game/"+ gameId);
-        stateAv.child("state"+avversario(colorPiece)).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                stateAvv= (String) snapshot.getValue();
-                if (snapshot.getValue().equals("false")){
-                    Toast.makeText(getApplicationContext(), "hai vinto il tuo avversario ha lasciato la partita", Toast.LENGTH_LONG).show();
-                    db.child("end").setValue(colorPiece);
-                    Intent intent = new Intent(getBaseContext(), EndGame.class);
-                    intent.putExtra("winner", colorPiece);
-                    intent.putExtra("player", colorPiece);
-                    intent.putExtra("moves", move);
-                    intent.putExtra("check", check);
-                    intent.putExtra("game", gameId+ "  USCITA " );
-                    startActivity(intent);
-                    finish();
-                }
-            }
-
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
-    private String imWinner(String end) {
-        //vedere se il giocatore è il vincitore
-        String isWinner;
-        if (end==colorPiece){
-            isWinner= "VITTORIA";
-        }
-        else {
-            isWinner= "SCONFITTA";
-        }
-        return isWinner;
-    }
-
-    private String avversario(String colorPiece) {
-        if (colorPiece.equals("W")){return "B";}
-        else {return "W";}
+        initializeBoard();
     }
 
 
@@ -515,19 +373,7 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
         db.child("fen").setValue(board.getFen());
         db.child("Nmove").setValue(0);
         db.child("Ncheck").setValue(0);
-        db.child("end").setValue("");
 
-    }
-
-
-    protected void onPause() {
-        super.onPause();
-        if (!isFinished){
-            if(stateAvv.equals("true")){
-                DatabaseReference state = database.getReference("game/" + gameId + "/state" + colorPiece);
-                state.setValue("false");
-            }
-        }
     }
 
 
@@ -735,7 +581,8 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
                 break;
         }
 
-        //Toast.makeText(getApplicationContext(), "is my turn "+ ismyturn(), Toast.LENGTH_LONG).show();
+        ArrayList<Move> allowMoves = new ArrayList<>();
+
         if(ismyturn()){
             if (c1==null) {
                 c1=click;
@@ -780,45 +627,23 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
 
                         if (board.isKingAttacked()){
                             colorRedking(parseBoard());
-                            //INIZIO: INCREMENTO MOSSE, board, fen
-                            DatabaseReference data = database.getReference("game/"+ gameId);
+                        }
+                        if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
 
-                            data.child("Ncheck").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                    if (!task.isSuccessful()) {
-                                        Log.e("firebase", "Error getting data", task.getException());
-                                    }
-                                    else {
-                                        Long Ncheck= (Long) task.getResult().getValue();
-                                        data.child("Ncheck").setValue(Ncheck+1);
-                                    }
-                                }
-                            });
-                            //FINE: INCREMENTO MOSSE, board, fen
+                            game_over.setVisibility(View.VISIBLE);
+                            Intent intent = getIntent();
+                            finish();
+                            startActivity(intent);
                         }
 
-                        clearDuble();
-
-                        /*if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
+                        if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
                             //System.out.println("scacco matto or Draw or stallo");
                             game_over.setVisibility(View.VISIBLE);
                             Intent intent = getIntent();
                             finish();
                             startActivity(intent);
-                            startActivity(intent);
-                            finish();
-                        }*/
-
-                        if (board.isMated()){
-                            //MATTO
-                            db.child("end").setValue(colorPiece);
-
-                        }else if(board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
-                            //patta
-                            db.child("end").setValue("X");
                         }
-
+                        clearDuble();
                     }else {
                         clearBoardColor();
                         c1=c2;
@@ -828,47 +653,76 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
                     }
                 }
             }
-
-
-            DatabaseReference datab = database.getReference("game/"+ gameId);
-            if (board.isMated()){
-                //MATTO
-                datab.child("end").setValue(colorPiece);
-            }else if(board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
-                //patta
-                datab.child("end").setValue("X");
+            if (board.isMated() || board.isDraw() || board.isStaleMate() || board.isInsufficientMaterial() || board.isRepetition()){
+                //System.out.println("scacco matto or Draw or stallo");
+                game_over.setVisibility(View.VISIBLE);
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
             }
         }
+
     }
 
     private boolean ismyturn() {
-        switch (colorPiece){
-            case "W":
-                if(move %2==0){
-                    return true;
+
+        //INIZIO: INCREMENTO MOSSE, board, fen
+        DatabaseReference db = database.getReference("game/"+ gameId);
+
+
+        db.child("Nmove").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
                 }
                 else {
-                    return false;
-                }
+                    Long m= (Long) task.getResult().getValue();
+                    switch (colorPiece){
+                        case "W":
+                            if(m %2==0){
+                                System.out.println("il giocatore è bianco ed è il suo turno");
+                                out=true;
+                            }
+                            else {
+                                System.out.println("il giocatore è bianco ed NON è il suo turno");
+                                out= false;
+                            }
+                            break;
 
-            case "B":
-                if(move %2!=0){
-                    return true;
-                }
-                else{
-                    return false;
-                }
+                        case "B":
+                            if(m %2!=0){
+                                System.out.println("il giocatore è nero ed è il suo turno");
+                                out= true;
+                            }
+                            else{
+                                System.out.println("il giocatore è nero ed NON è il suo turno");
+                                out= false;
+                            }
+                            break;
 
-            default:
-                throw new IllegalStateException("Unexpected value: " + colorPiece);
-        }
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + colorPiece);
+                    }
+                }
+            }
+        });
+        //FINE: INCREMENTO MOSSE, board, fen
+
+        return out;
+        //FINE: INCREMENTO MOSSE
+        //return  true;
+        /*
+        System.out.println("è pari o dispari? " + move[0] %2);
+
+         */
 
     }
 
 
     public void pawnChoice (View view){
-        //TODO: vedere se worka la promozione
         pawn_choices.setVisibility(View.INVISIBLE);
+        returnedText.setText("Please chose among:\n'Regina'\n'Alfiere'\n'Torre'\n'Cavallo'");
         TextView t= (TextView) view;
         switch (t.getText().toString()){
             case "Queen":   lastChoice = (board.getSideToMove().equals(Side.WHITE)) ?  Piece.WHITE_QUEEN :  Piece.BLACK_QUEEN;
@@ -907,6 +761,7 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
 
         clearBoardColor();
         moveBoard(parseBoard());
+        returnedText.setText(suggestions.getFirstMessage());
 
         clearDuble();
     }
@@ -1035,6 +890,8 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
     }
 
     /**
+     *
+     *
      * Remark: Java is Row first, but the display JAVA è ROW FIRST MA IL DISPLAY BOARD E TUTTA L'ACTIVITY è STATA INIZIALIZZATA AL CONTRARIO
      */
     private void moveBoard(String[][] matrix){
@@ -1277,6 +1134,7 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
             settingsMenu.setVisibility(View.VISIBLE);
         }else {
             settingsMenu.setVisibility(View.GONE);
+            returnedText.setText(suggestions.getFirstMessage());
         }
 
     }
@@ -1298,5 +1156,6 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
 
     public void Back(View view) {
         settingsMenu.setVisibility(View.GONE);
+        returnedText.setText(suggestions.getFirstMessage());
     }
 }

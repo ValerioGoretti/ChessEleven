@@ -40,6 +40,19 @@ public class Matchmaking extends AppCompatActivity {
     private String gameId;
     private SharedPreferences shared;
     private String color="null";
+    private  ArrayList<String> user = new ArrayList<String>() {
+        {
+            add("Valerio");
+            add("Franco");
+            add("Peppe");
+            add("Bello");
+            add("Brutto");
+            add("Giovanni");
+            add("Pirullo");
+            add("Lollo");
+            add("BlaBla");
+        }
+    };
 
     private FirebaseDatabase database= FirebaseDatabase.getInstance();
 
@@ -101,7 +114,6 @@ public class Matchmaking extends AppCompatActivity {
                                     if (w && b){
                                         //cancella Waiting room
                                         waitingRoom.child("WaitingRoom").child(gameId).removeValue();
-                                        waitingRoom.child("game").child(gameId).removeEventListener(this);
                                         startActivity(i);
                                         finish();
                                     }
@@ -139,30 +151,84 @@ public class Matchmaking extends AppCompatActivity {
                     }
                 });
 
-    }
 
 
-    protected void onPause() {
-        super.onPause();
-        DatabaseReference mDatabase = database.getReference("WaitingRoom/" + gameId);
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+
+
+
+
+
+
+
+/*
+           ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                if (!snapshot.hasChild("B")) {
-                    Toast.makeText(getApplicationContext(), "sei solo", Toast.LENGTH_LONG).show();
-                    mDatabase.removeValue();
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int totalsize = (int) snapshot.getChildrenCount();
+                //Toast.makeText(getApplicationContext(), "num -> " + totalsize, Toast.LENGTH_LONG).show();
+                if (totalsize == 0) {
+                    gameId=gameID();
+                    DatabaseReference room= database.getReference("WaitingRoom/"+ gameId);
+                    DatabaseReference playerW= database.getReference("WaitingRoom/"+gameId+"/W");
+                    room.setValue(nome);
+                    playerW.setValue(nome);
+                    Toast.makeText(getApplicationContext(), "Room creata", Toast.LENGTH_LONG).show();
+
+                    Mandare il giocatore bianco alla scacchiera
+
+        i.putExtra("color","W");
+        i.putExtra("game", gameId);
+        startActivity(i);
+        finish();
+    }else {
+        for(DataSnapshot ds : snapshot.getChildren()) {
+            String gameCod = ds.getKey();
+            DatabaseReference playerB= database.getReference("WaitingRoom/"+gameCod+"/B");
+            DatabaseReference playerGameB= database.getReference("game/"+ gameCod+"/B");
+            i.putExtra("game", gameCod);
+            playerB.setValue(nome);
+            playerGameB.setValue(nome);
+            DatabaseReference playerGameW= database.getReference("game/"+ gameCod+"/W");
+            //Toast.makeText(getApplicationContext(), " " + ds.getChildrenCount(), Toast.LENGTH_LONG).show();
+            for (DataSnapshot d: ds.getChildren()){
+                if (d.getKey().equals("W")){
+                    playerGameW.setValue(d.getValue());
                 }
             }
+        }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+        //cancella waiting room
+        DatabaseReference waitingQuery = database.getReference().child("WaitingRoom").child(gameId);
+        waitingQuery.removeValue();
 
-            }
-        });
+
+
+                    Mandare il giocatore nero alla scacchiera
+
+        i.putExtra("color","B");
+    }
+    startActivity(i);
+    finish();
+}
+
+
+    @Override
+    public void onCancelled(@NonNull DatabaseError error) {
+
+    }
+};
+        waitingRoom.addListenerForSingleValueEvent(valueEventListener);
+ */
+
     }
 
 
 
+    public void nome(View view) {
+        Random rand = new Random();
+        int ind= rand.nextInt(4);
+        this.nome=user.get(ind);
+    }
 
     private String gameID(){
         char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
