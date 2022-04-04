@@ -109,8 +109,6 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
             }
         });
 
-
-
         db.child("fen").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -884,23 +882,27 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
         }
 
         board.doMove(new Move(c1,c2,lastChoice));
-
-        //INIZIO: INCREMENTO MOSSE, board, fen
+        //INIZIO: INCREMENTO MOSSE
         DatabaseReference db = database.getReference("game/"+ gameId);
-
-        db.child("Nmove").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        db.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
-                }
-                else {
-                    Long move= (Long) task.getResult().getValue();
-                    db.child("Nmove").setValue(move+1);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot sn: dataSnapshot.getChildren()) {
+
+                    if(sn.getKey().equals("Nmove")){
+                        DatabaseReference move = database.getReference("game/"+ gameId+"/Nmove");
+                        Long s= (Long) sn.getValue();
+                        move.setValue(s+1);
+                    }
                 }
             }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
         });
-        //FINE: INCREMENTO MOSSE, board, fen
+        //FINE: INCREMENTO MOSSE
 
 
         clearBoardColor();

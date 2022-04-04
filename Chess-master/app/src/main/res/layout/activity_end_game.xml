@@ -11,7 +11,7 @@
 
     <GridLayout
         android:id="@+id/grid"
-        android:layout_width="330dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:columnCount="2"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -19,13 +19,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:background="#ffffff"
-        android:layout_marginTop="70dp"
-        >
+        android:layout_marginTop="70dp">
+
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/ResultTxt"
+            android:id="@+id/Result"
             android:text="Result"
             android:textSize="50dp"
             android:layout_columnWeight="1"
