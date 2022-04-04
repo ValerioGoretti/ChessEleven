@@ -1,8 +1,6 @@
 package com.example.dipanshkhandelwal.chess;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -30,7 +28,6 @@ public class SignUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_singn_up);
         Button b=(Button) findViewById(R.id.button3);
-        Button singIn=(Button) findViewById(R.id.toLogin);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -117,14 +114,6 @@ public class SignUp extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
-            }
-
-        });
-        singIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getBaseContext(),LoginActivity.class));
-                finish();
             }
         });
     }

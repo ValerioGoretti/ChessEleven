@@ -13,14 +13,12 @@ import android.widget.TextView;
 public class Home extends AppCompatActivity {
     private Button communityButton;
     private  Button multiButton;
-    private Button logoutButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Button profile=(Button) findViewById(R.id.button_profile);
-        Button logout=(Button) findViewById(R.id.logout);
         TextView text= (TextView) findViewById(R.id.textView6);
         SharedPreferences shared=PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         text.setText("Welcome\n"+shared.getString("username","null"));
@@ -45,14 +43,6 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getBaseContext(),Matchmaking.class));
-            }
-        });
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                shared.edit().clear();
-                startActivity(new Intent(getBaseContext(),Welcome.class));
-                finish();
             }
         });
 
