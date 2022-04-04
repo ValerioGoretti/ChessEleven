@@ -61,6 +61,9 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
     private DatabaseReference fen;
     private TextView col;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> parent of 7f8aed8 (fix multiplayer)
 
 
     //DONE: Vedere perchè da sempre true quando giochi con il bianco
@@ -68,9 +71,12 @@ public class Multiplayer extends AppCompatActivity  implements View.OnClickListe
 
     //TODO: AGGIORNARE NEL LISTNER NELL'ONCREATE ANCHE L'ENVIRONMENT            IDEA: METTERE UN CAMPO PER L'ULTIMA MOSSA COSì CHE LA AGGIORNA QUANDO LO VEDE (?)
 
+<<<<<<< HEAD
 =======
     private boolean blackOnline = false;
 >>>>>>> parent of 5e9889f (Update Multiplayer.java)
+=======
+>>>>>>> parent of 7f8aed8 (fix multiplayer)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
