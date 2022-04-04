@@ -7,10 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,8 +37,6 @@ public class Profile extends AppCompatActivity {
         TextView draws=(TextView) findViewById((R.id.profile_draws));
         TextView total=(TextView) findViewById((R.id.profile_total));
         TextView email=(TextView) findViewById(R.id.profile_email);
-        LinearLayout linearLayout=(LinearLayout)findViewById(R.id.linearLayout);
-        ProgressBar pr= (ProgressBar) findViewById(R.id.progress_visita);
         username.setText(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("username","none"));
 
         try{
@@ -51,8 +46,6 @@ public class Profile extends AppCompatActivity {
             StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    pr.setVisibility(View.GONE);
-                    linearLayout.setVisibility(View.VISIBLE);
 
                     try {
                         System.out.println(response);
@@ -78,7 +71,6 @@ public class Profile extends AppCompatActivity {
             },new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    pr.setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(), "Service unavailable, try later",
                             Toast.LENGTH_LONG).show();
                     Log.e("VOLLEY", error.toString());
@@ -105,11 +97,9 @@ public class Profile extends AppCompatActivity {
 
         }
         catch (Exception e) {
-            pr.setVisibility(View.GONE);
             Toast.makeText(getApplicationContext(), "Service unavailable, try later",
                     Toast.LENGTH_LONG).show();
             e.printStackTrace();
-
         }
     }
 }
