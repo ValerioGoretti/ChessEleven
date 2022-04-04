@@ -7,32 +7,22 @@
     tools:context=".Matchmaking">
 
 
-    <Button
-        android:id="@+id/buttonGame"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="waitingRoom"
-        android:text="Play a game"
-        app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints,OnClick" />
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="vertical"
+       android:gravity="center">
 
-    <Button
-        android:id="@+id/buttonName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="nome"
-        android:text="Nome"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints,OnClick" />
+       <ProgressBar
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content">
+
+       </ProgressBar>
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Matchmaking in progress">
+       </TextView>
+   </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
