@@ -31,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Button signUp=(Button) findViewById(R.id.toSignup);
         Button login=(Button)findViewById(R.id.button2);
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,6 +103,13 @@ public class LoginActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+            }
+        });
+        signUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getBaseContext(),SignUp.class));
+                finish();
             }
         });
     }
